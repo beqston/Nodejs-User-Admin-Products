@@ -1,0 +1,35 @@
+<%if(isLogged){%>
+    <header>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/products">Products</a>
+        </nav>
+
+        <div>
+            <%if(user){%>
+                <span>User Role:<%=user.role%></span>
+            <%}%>
+            <a href="/logout">loggin out</a>
+        </div>
+    </header>
+<%} else {%>
+    <header>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/products">Products</a>
+        </nav>
+
+        <div>
+            <form action="/login" method="POST">
+                <%if(errors.message) {%>
+                    <p class="error"><%=errors.message%></p>
+                <%}%>
+                <input type="email" name="email" placeholder="email">
+                <input type="password" name="password" placeholder="password">
+                <button type="submit">Login</button>
+            </form>
+
+            <a href="/signup">Sign Up</a>
+        </div>
+    </header>
+<%}%>

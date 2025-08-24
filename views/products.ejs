@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Page</title>
+    <link rel="stylesheet" href="/styles/styles.css">
+</head>
+<body>
+
+   <%- include('partials/header') %>
+
+    <h1>Products Page</h1>
+
+    <div class="products-cnt">
+        <%if(products.length == 0) {%>
+            <h2>Product Not Found!</h2>
+        <%} else {%>
+            <% products.forEach((item)=> { %>
+                <div class="product-wrap">
+                    <h2><%=item.title%></h2>
+                    <h3><%=item.price%></h3>
+                    <p><%=item.description%></p>
+                </div>
+            <%})%>
+
+        <%}%>
+    </div>
+
+       
+
+    
+
+
+</body>
+</html>
