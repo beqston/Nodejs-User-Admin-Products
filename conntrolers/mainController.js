@@ -2,7 +2,7 @@ import { errors } from "../utils/errorMessage.js";
 import Product from '../models/product.js'
 import User from '../models/user.js'
 import { isLogged } from "../utils/isAuthHelper.js";
-import bcrypt from "bcryptjs";
+
 
 export const getHome = async(req, res)=> {
 
@@ -25,13 +25,14 @@ export const getLogin = (req, res)=>{
     if(isLogged){
         return res.status(401).redirect('/');
     }
+    errors.message = 'You password is incorect!'
     return res.status(200).render('login', {errors});
 };
 
 export const postLogin = async(req, res)=>{
     try {
         const user = await User.findOne({email:req.body.email}).select('+password');
-        const password = await bcrypt.compare(req.body.password, user.password);
+        const password = await user.comparePassword(req.body.password);
         if(!password){
             errors.message = 'Your password is incorect!!'
             return res.redirect('/login')
