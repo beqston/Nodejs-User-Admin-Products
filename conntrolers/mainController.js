@@ -1,7 +1,8 @@
 import { errors } from "../utils/errorMessage.js";
 import Product from '../models/product.js'
 import User from '../models/user.js'
-import { isLogged } from "../utils/isAuthHelper.js";
+import { isLogged, stayPath } from "../utils/isAuthHelper.js";
+import { userInfo } from "../utils/profileHelper.js";
 
 
 export const getHome = async(req, res)=> {
@@ -12,7 +13,8 @@ export const getHome = async(req, res)=> {
         return res.status(200).render('index', {
         errors,
         isLogged,
-        user
+        user,
+        userInfo
     });
    }
     return res.status(200).render('index', {
@@ -39,7 +41,7 @@ export const postLogin = async(req, res)=>{
         }
         req.session.isLogged = true;
         res.cookie('user', user);
-        return res.status(201).redirect('/');
+        return res.status(201).redirect(stayPath);
     } catch (error) {
         // Optional: check for a specific error message
         if (error.message === 'Assignment to constant variable.') {
@@ -50,8 +52,7 @@ export const postLogin = async(req, res)=>{
         errors.message = 'interval server error'
         return res.redirect('/'); // or login, or homepage, up to you
     }
-}
-
+};
 
 export const getProducts = async(req, res)=> {
     try {
@@ -61,7 +62,7 @@ export const getProducts = async(req, res)=> {
             user = await User.findById(userCookie._id);
         }
         const products = await Product.find();
-        return res.status(200).render('products', {products, errors, isLogged, user});
+        return res.status(200).render('products', {products, errors, isLogged, user, userInfo});
     } catch (error) {
         return res.status(404).render('products', {error: 'error'})
     }
@@ -124,7 +125,6 @@ export const porstSignUp = async (req, res)=> {
     };
 };
 
-
 export const logOutAll = (req, res)=>{
     req.session.destroy(err => {
     if (err) {
@@ -137,4 +137,20 @@ export const logOutAll = (req, res)=>{
     res.clearCookie('user');
     return res.status(301).redirect('/');
     });
-}
+};
+
+export const getProfile = async(req, res)=>{
+  try {
+  const {id} = req.params;
+  const user = await User.findOne({email:req.cookies.user.email});
+
+  if(user && req.cookies.user && isLogged && req.cookies.user.id == id){
+    return res.status(200).render('profile', {userInfo});
+  }
+  return res.status(401).send('<h1>User not found!</h1>');
+  } catch (error) {
+    return res.status(500).send(`<h1>Internal server error: ${error.message}</h1>`)
+  }
+};
+
+

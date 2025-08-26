@@ -6,8 +6,6 @@ import cookieParser from "cookie-parser";
 
 import session from "express-session";
 import  MongoDBStore  from "connect-mongodb-session";
-import { errors } from "./utils/errorMessage.js";
-import { isAuthHelper } from "./utils/isAuthHelper.js";
 
 
 dotenv.config();
@@ -38,21 +36,6 @@ app.use(session({
     saveUninitialized: false,
     store: store
 }));
-
-//auth middleware
-app.use((req, res, next)=>{
-  isAuthHelper(req)
-  next();
-});
-
-app.use((req, res, next)=>{
-  if(errors.message){
-    setTimeout(()=>{
-      errors.message = ''
-    }, 2000);
-  };
-  next();
-});
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');

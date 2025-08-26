@@ -6,9 +6,15 @@
         </nav>
 
         <div>
-            <%if(user){%>
-                <span>User Role:<%=user.role%></span>
-            <%}%>
+            <div class="dropdown">
+                <img src="/photos/profile.png" alt="profile">
+                <div class="dropdown-content">
+                    <a href="/profile/<%=userInfo.id%>">Profile</a>
+                    <h2><%=userInfo.email%></h2>
+                    <p><%=userInfo.role%></p>
+                </div>
+            </div>
+
             <a href="/logout">loggin out</a>
         </div>
     </header>

@@ -7,3 +7,11 @@ export const isAuthHelper = (req)=>{
       isLogged = false;
   }
 };
+
+export let stayPath ='/'
+
+export const pathNow = (req)=>{
+    if(req.method == "GET"){
+        stayPath = req.path
+  }
+};
