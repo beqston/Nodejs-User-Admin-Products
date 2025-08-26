@@ -1,10 +1,8 @@
 import express from "express";
 import { getHome, getLogin, getProducts, getProfile, getSignUp, logOutAll, porstSignUp, postLogin } from "../conntrolers/mainController.js";
-import User from "../models/user.js";
 const mainRouter = express.Router();
 import { errors } from "../utils/errorMessage.js";
-import { isAuthHelper, isLogged, pathNow } from "../utils/isAuthHelper.js";
-import { userProfile } from "../utils/profileHelper.js";
+import { isAuthHelper, pathNow } from "../utils/isAuthHelper.js";
 
 //auth middleware
 mainRouter.use((req, res, next)=>{
@@ -26,13 +24,6 @@ mainRouter.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send('<h1>Something broke!</h1>')
 });
-// User profile middleware
-mainRouter.use((req, res, next)=> {
-  if(isLogged){
-    userProfile(req);
-  }
-  next();
-})
 
 // Crud operator router
 mainRouter.get('/', getHome);

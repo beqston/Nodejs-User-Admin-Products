@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile Page</title>
+    <link rel="stylesheet" href="/styles/styles.css">
 </head>
 <body>
-
-    <h1>User Profile </h1>
-    <h2><%=userInfo.email%></h2>
-    <h3><%=userInfo.role%></h3>
+    <%- include('partials/header') %>
+    <div class="profile">
+        <h1>User Profile </h1>
+        <h2>email: <%=user.email%></h2>
+        <h3>role: <%=user.role%></h3>
+    </div>
 </body>
 </html>

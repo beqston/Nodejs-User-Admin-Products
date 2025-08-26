@@ -2,7 +2,6 @@ import { errors } from "../utils/errorMessage.js";
 import Product from '../models/product.js'
 import User from '../models/user.js'
 import { isLogged, stayPath } from "../utils/isAuthHelper.js";
-import { userInfo } from "../utils/profileHelper.js";
 
 
 export const getHome = async(req, res)=> {
@@ -14,7 +13,6 @@ export const getHome = async(req, res)=> {
         errors,
         isLogged,
         user,
-        userInfo
     });
    }
     return res.status(200).render('index', {
@@ -54,6 +52,7 @@ export const postLogin = async(req, res)=>{
     }
 };
 
+
 export const getProducts = async(req, res)=> {
     try {
         let user;
@@ -62,7 +61,7 @@ export const getProducts = async(req, res)=> {
             user = await User.findById(userCookie._id);
         }
         const products = await Product.find();
-        return res.status(200).render('products', {products, errors, isLogged, user, userInfo});
+        return res.status(200).render('products', {products, errors, isLogged, user});
     } catch (error) {
         return res.status(404).render('products', {error: 'error'})
     }
@@ -141,16 +140,14 @@ export const logOutAll = (req, res)=>{
 
 export const getProfile = async(req, res)=>{
   try {
-  const {id} = req.params;
-  const user = await User.findOne({email:req.cookies.user.email});
+    const {id} = req.params;
+    const user = await User.findOne({email:req.cookies.user.email});
 
-  if(user && req.cookies.user && isLogged && req.cookies.user.id == id){
-    return res.status(200).render('profile', {userInfo});
-  }
-  return res.status(401).send('<h1>User not found!</h1>');
+    if(user && req.cookies.user && isLogged && req.cookies.user.id == id){
+        return res.status(200).render('profile', {user, isLogged});
+    }
+    return res.status(401).send('<h1>User not found!</h1>');
   } catch (error) {
     return res.status(500).send(`<h1>Internal server error: ${error.message}</h1>`)
   }
 };
-
-

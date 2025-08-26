@@ -136,3 +136,13 @@ form button{
 .dropdown:hover .dropdown-content {
   display: block;
 }
+
+.profile{
+    width: 48%;
+    margin: auto;
+    border: 2px solid lightcoral;
+    background-color: bisque;
+    display: grid;
+    place-items: center;
+    padding: 20px 0;
+}
