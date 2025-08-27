@@ -25,8 +25,7 @@ export const getLogin = (req, res)=>{
     if(isLogged){
         return res.status(401).redirect('/');
     }
-    errors.message = 'You password is incorect!'
-    return res.status(200).render('login', {errors});
+    return res.status(200).render('login', {errors, isLogged});
 };
 
 export const postLogin = async(req, res)=>{
@@ -151,3 +150,10 @@ export const getProfile = async(req, res)=>{
     return res.status(500).send(`<h1>Internal server error: ${error.message}</h1>`)
   }
 };
+export const getForgot = (req, res)=> {
+  res.status(200).render('forgot', {errors, isLogged});
+};
+
+export const getReset = (req, res)=>{
+    return res.render('reset', {errors, isLogged})
+}

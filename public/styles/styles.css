@@ -146,3 +146,7 @@ form button{
     place-items: center;
     padding: 20px 0;
 }
+.signup-forgot{
+    display: flex;
+    flex-direction: column;
+}

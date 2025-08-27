@@ -1,8 +1,9 @@
 import express from "express";
-import { getHome, getLogin, getProducts, getProfile, getSignUp, logOutAll, porstSignUp, postLogin } from "../conntrolers/mainController.js";
+import { getForgot, getHome, getLogin, getProducts, getProfile, getReset, getSignUp, logOutAll, porstSignUp, postLogin } from "../conntrolers/mainController.js";
 const mainRouter = express.Router();
 import { errors } from "../utils/errorMessage.js";
 import { isAuthHelper, pathNow } from "../utils/isAuthHelper.js";
+import User from "../models/user.js";
 
 //auth middleware
 mainRouter.use((req, res, next)=>{
@@ -32,5 +33,21 @@ mainRouter.route('/signup').get( getSignUp).post(porstSignUp);
 mainRouter.all('/logout', logOutAll);
 mainRouter.route('/login').get(getLogin).post(postLogin);
 mainRouter.get('/profile/:id', getProfile);
+mainRouter.route('/forgot').get(getForgot).post(async(req, res)=>{
+  try {
+    const {email} = req.body;
+    const user = User.findOne({email});
+    if(!user){
+      return res.status(403).redirect('/forgot')
+    }
+    
+    const random = Math.ceil(Math.random() * 100000);
+    console.log(random);
+    return res.status(201).redirect(`/reset/${random}`);
+  } catch (error) {
+    return res.status(500).send('Internal server error')
+  }
+});
+mainRouter.get('/reset/:id', getReset);
 
 export default mainRouter;

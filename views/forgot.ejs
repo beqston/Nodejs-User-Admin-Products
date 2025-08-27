@@ -9,13 +9,12 @@
 <body>
     <%- include('partials/header') %>
     <section class="login">
-        <h2>Login</h2>
+        <h2>Forgot Password</h2>
         <%if(errors.message){%>
             <p class="error"><%=errors.message%></p>
         <%}%>
-        <form action="/login" method="POST">
+        <form action="/forgot" method="POST">
             <input type="email" name="email" placeholder="email">
-            <input type="password" name="password" placeholder="password">
             <button type="submit">Login</button>
         </form>
     </section>
