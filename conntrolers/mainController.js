@@ -21,6 +21,29 @@ export const getHome = async(req, res)=> {
     });
 };
 
+export const postProduct = async (req, res)=>{
+  try {
+    if(isLogged){
+      const userId = req.cookies.user.id; // assuming you're using some auth middleware
+      const { title, price, description } = req.body;
+      const product = await Product.create({
+        title,
+        price,
+        description,
+        user: userId
+      });
+      
+      if(!product){
+        throw new Error('Canntot added product');
+      }
+      return res.status(201).redirect('/products')
+    }
+
+  } catch (error) {
+    return res.status(500).send('Interval sevrver error', + error.message)
+  }
+};
+
 export const getLogin = (req, res)=>{
     if(isLogged){
         return res.status(401).redirect('/');

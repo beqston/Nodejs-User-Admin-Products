@@ -3,16 +3,23 @@ import mongoose from "mongoose";
 const productSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: [true, 'you have must be title'],
+        required: [true, 'Title is required'],
     },
     price:{
         type: Number,
-        required: [true, 'you have must be price']
+        required: [true, 'Price is required']
     },
     description:{
         type: String,
-        reqired: [true, 'you have must be description']
+        reqired: [true, 'Description is required']
+    },
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     }
+}, {
+    toJSON:{virtuals:true},
+    toObject: {virtuals:true}
 });
 
 

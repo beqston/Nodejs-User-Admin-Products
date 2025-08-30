@@ -150,3 +150,16 @@ form button{
     display: flex;
     flex-direction: column;
 }
+.add-product{
+    width: fit-content;
+    border: 2px solid green;
+    padding: 20px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+}
+.add-product textarea{
+    width: 180px !important;
+    max-height: 100px;
+}

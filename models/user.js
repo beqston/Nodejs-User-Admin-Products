@@ -29,12 +29,11 @@ const userSchema = new mongoose.Schema({
     type:String,
     enum: {
         values: ['user', 'admin' ],
-        message: 'rolemast be user or admin'
+        message: 'role must be user or admin'
     },
     default: 'user'
-    },
+    }
 },{
-    autoCreate:false,
     toJSON:{virtuals:true},
     toObject: {virtuals:true}
 });
