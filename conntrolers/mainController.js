@@ -210,19 +210,30 @@ export const getReset = (req, res)=>{
 
 export const getProduct = async(req, res)=>{
   try {
-    const userCookie = req.cookies.user;
-    const user = await User.findById(userCookie._id);
+
     const {id} = req.params;
     const product = await Product.findById(id);
     if(!product){
       return res.status(400).send('File Not Found!  <a href="/products">Back Products Page</a>');
     };
 
+    if(isLogged){
+        const userCookie = req.cookies.user;
+        const user = await User.findById(userCookie._id);
+        return res.status(200).render('product', {
+        isLogged,
+        product,
+        user,
+        errors,
+        title: `Product Item | ${product.title}`
+    });
+    };
+
     return res.status(200).render('product', {
-      isLogged,
-      product,
-      user,
-      title: `Product Item | ${product.title}`
+        isLogged,
+        product,
+        errors,
+        title: `Product Item | ${product.title}`
     });
     
   } catch (error) {
