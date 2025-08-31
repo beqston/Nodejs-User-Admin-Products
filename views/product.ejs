@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+ <%- include('partials/head') %>
+<body>
+    <%- include('partials/header') %>
+    
+    <section class="product-item">
+        <div class="wrapper">
+            <h2><%=product.title%></h2>
+            <p><%=product.price%></p>
+            <p><%=product.description%></p>
+        </div>
+        <a href="/products">Back To Products Page</a>
+    </section>
+</body>
+</html>

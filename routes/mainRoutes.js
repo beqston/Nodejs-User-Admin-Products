@@ -1,10 +1,9 @@
 import express from "express";
-import { getForgot, getHome, getLogin, getProducts, getProfile, getReset, getSignUp, logOutAll, porstSignUp, postLogin, postProduct } from "../conntrolers/mainController.js";
+import { getForgot, getHome, getLogin, getProduct, getProducts, getProfile, getReset, getSignUp, logOutAll, porstSignUp, postLogin, postProduct } from "../conntrolers/mainController.js";
 const mainRouter = express.Router();
 import { errors } from "../utils/errorMessage.js";
-import { isAuthHelper, isLogged, pathNow } from "../utils/isAuthHelper.js";
+import { isAuthHelper, pathNow } from "../utils/isAuthHelper.js";
 import User from "../models/user.js";
-import Product from "../models/product.js";
 
 //auth middleware
 mainRouter.use((req, res, next)=>{
@@ -30,6 +29,7 @@ mainRouter.use((err, req, res, next) => {
 // Crud operator router
 mainRouter.get('/', getHome);
 mainRouter.get('/products', getProducts);
+mainRouter.get('/product/:id', getProduct);
 mainRouter.post('/add-product', postProduct);
 mainRouter.route('/signup').get( getSignUp).post(porstSignUp);
 mainRouter.all('/logout', logOutAll);

@@ -163,3 +163,14 @@ form button{
     width: 180px !important;
     max-height: 100px;
 }
+
+.product-item{
+    margin: 20px;
+}
+
+.wrapper{
+    width: 300px;
+    margin: auto;
+    border: 2px solid green;
+    padding: 30px;
+}

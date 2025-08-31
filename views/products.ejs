@@ -1,13 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Page</title>
-    <link rel="stylesheet" href="/styles/styles.css">
-</head>
+    <%- include('partials/head') %>
 <body>
-
    <%- include('partials/header') %>
 
     <h1>Products Page</h1>
@@ -21,6 +15,7 @@
                     <h2><%=item.title%></h2>
                     <h3><%=item.price%></h3>
                     <p><%=item.description%></p>
+                    <a href="/product/<%=item.id%>">See More</a>
                 </div>
             <%})%>
 

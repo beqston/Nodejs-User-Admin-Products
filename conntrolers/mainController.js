@@ -13,18 +13,20 @@ export const getHome = async(req, res)=> {
         errors,
         isLogged,
         user,
+        title: 'Home Page'
     });
    }
     return res.status(200).render('index', {
         errors,
-        isLogged
+        isLogged,
+        title:'Home Page'
     });
 };
 
 export const postProduct = async (req, res)=>{
   try {
     if(isLogged){
-      const userId = req.cookies.user.id; // assuming you're using some auth middleware
+      const userId = req.cookies.user.id; 
       const { title, price, description } = req.body;
       const product = await Product.create({
         title,
@@ -48,7 +50,11 @@ export const getLogin = (req, res)=>{
     if(isLogged){
         return res.status(401).redirect('/');
     }
-    return res.status(200).render('login', {errors, isLogged});
+    return res.status(200).render('login', {
+        errors, 
+        isLogged, 
+        title: 'Login Page'
+    });
 };
 
 export const postLogin = async(req, res)=>{
@@ -83,14 +89,23 @@ export const getProducts = async(req, res)=> {
             user = await User.findById(userCookie._id);
         }
         const products = await Product.find();
-        return res.status(200).render('products', {products, errors, isLogged, user});
+        return res.status(200).render('products', {
+            products, 
+            errors, 
+            isLogged, 
+            user,
+            title: 'All Products Page'
+        });
     } catch (error) {
         return res.status(404).render('products', {error: 'error'})
     }
 };
 
 export const getSignUp = (req, res)=>{
-    return res.status(200).render('signUp', {errors});
+    return res.status(200).render('signUp', {
+        errors,
+        title: 'Sign Up Page'
+    });
 };
 
 
@@ -166,7 +181,11 @@ export const getProfile = async(req, res)=>{
     const user = await User.findOne({email:req.cookies.user.email});
 
     if(user && req.cookies.user && isLogged && req.cookies.user.id == id){
-        return res.status(200).render('profile', {user, isLogged});
+        return res.status(200).render('profile', {
+            user, 
+            isLogged,
+            title: `User Profile | ${user.email}`
+        });
     }
     return res.status(401).send('<h1>User not found!</h1>');
   } catch (error) {
@@ -174,9 +193,39 @@ export const getProfile = async(req, res)=>{
   }
 };
 export const getForgot = (req, res)=> {
-  res.status(200).render('forgot', {errors, isLogged});
+  res.status(200).render('forgot', {
+    errors, 
+    isLogged,
+    title: 'Forgot Password'
+});
 };
 
 export const getReset = (req, res)=>{
-    return res.render('reset', {errors, isLogged})
+    return res.render('reset', {
+        errors, 
+        isLogged,
+        title: 'Reset Password'
+    })
 }
+
+export const getProduct = async(req, res)=>{
+  try {
+    const userCookie = req.cookies.user;
+    const user = await User.findById(userCookie._id);
+    const {id} = req.params;
+    const product = await Product.findById(id);
+    if(!product){
+      return res.status(400).send('File Not Found!  <a href="/products">Back Products Page</a>');
+    };
+
+    return res.status(200).render('product', {
+      isLogged,
+      product,
+      user,
+      title: `Product Item | ${product.title}`
+    });
+    
+  } catch (error) {
+    return res.status(500).send('Interval server error');
+  };
+};
