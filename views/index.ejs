@@ -5,6 +5,12 @@
     <%- include('partials/header') %>
     <h1>Home Page</h1>
 
+    <%if(errors.message) {%>
+        <div class="error-message">
+            <p class="error"><%=errors.message%></p>
+        </div>
+    <%}%>
+
     <%- include('partials/add-product') %>
 </body>
 </html>

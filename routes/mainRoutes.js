@@ -49,6 +49,7 @@ mainRouter.route('/forgot').get(getForgot).post(async(req, res)=>{
   } catch (error) {
     return res.status(500).send('Internal server error')
   }
+  
 });
 mainRouter.get('/reset/:id', getReset);
 

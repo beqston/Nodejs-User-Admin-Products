@@ -3,6 +3,12 @@
  <%- include('partials/head') %>
 <body>
     <%- include('partials/header') %>
+
+    <%if(errors.message) {%>
+        <div class="error-message">
+            <p class="error"><%=errors.message%></p>
+        </div>
+    <%}%>
     <div class="profile">
         <h1>User Profile </h1>
         <h2>email: <%=user.email%></h2>

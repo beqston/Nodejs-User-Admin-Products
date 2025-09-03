@@ -25,11 +25,9 @@
             <a href="/products">Products</a>
         </nav>
 
+
         <div>
             <form action="/login" method="POST">
-                <%if(errors.message) {%>
-                    <p class="error"><%=errors.message%></p>
-                <%}%>
                 <input type="email" name="email" placeholder="email">
                 <input type="password" name="password" placeholder="password">
                 <button type="submit">Login</button>

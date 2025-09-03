@@ -3,11 +3,14 @@
 <%- include('partials/head') %>
 <body>
     <%- include('partials/header') %>
+
+    <%if(errors.message) {%>
+        <div class="error-message">
+            <p class="error"><%=errors.message%></p>
+        </div>
+    <%}%>
     <section class="login">
         <h2>Login</h2>
-        <%if(errors.message){%>
-            <p class="error"><%=errors.message%></p>
-        <%}%>
         <form action="/login" method="POST">
             <input type="email" name="email" placeholder="email">
             <input type="password" name="password" placeholder="password">

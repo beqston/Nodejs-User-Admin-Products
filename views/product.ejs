@@ -4,6 +4,11 @@
 <body>
     <%- include('partials/header') %>
     
+    <%if(errors.message) {%>
+        <div class="error-message">
+            <p class="error"><%=errors.message%></p>
+        </div>
+    <%}%>
     <section class="product-item">
         <div class="wrapper">
             <h2><%=product.title%></h2>

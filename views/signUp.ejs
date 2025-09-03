@@ -9,7 +9,7 @@
     <section class="signup">
         <h2>Sign Up</h2>
         <%if(errors.message){%>
-            <p class="error"><%=errors.message%></p>
+            <p class="error-message"><%=errors.message%></p>
         <%}%>
         <form action="/signup" method="POST">
             <input type="email" name="email" placeholder="email">

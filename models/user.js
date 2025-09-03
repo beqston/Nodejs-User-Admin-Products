@@ -32,13 +32,24 @@ const userSchema = new mongoose.Schema({
         message: 'role must be user or admin'
     },
     default: 'user'
-    }
+    }, 
+    products: [
+        {
+            type: mongoose.Schema.ObjectId,
+            ref: 'Product'
+        }
+    ]
+    
+
 },{
     toJSON:{virtuals:true},
     toObject: {virtuals:true}
 });
 
+// Index for faster queries on email
+userSchema.index({ email: 1 });
 
+// Pre-save middleware to hash password
 userSchema.pre('save', async function(next){
     if(!this.isModified('password')) return next();
     this.password =  await bcrypt.hash(this.password, 12);
@@ -46,6 +57,7 @@ userSchema.pre('save', async function(next){
     next();
 });
 
+// Instance method to compare passwords
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };

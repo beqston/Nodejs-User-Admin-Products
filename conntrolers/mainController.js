@@ -23,17 +23,22 @@ export const getHome = async(req, res)=> {
     });
 };
 
+
 export const postProduct = async (req, res)=>{
   try {
     if(isLogged){
       const userId = req.cookies.user.id; 
       const { title, price, description } = req.body;
+      const user = await User.findById(userId);
       const product = await Product.create({
         title,
         price,
         description,
         user: userId
       });
+
+      user.products.push(product._id);
+      await user.save();
       
       if(!product){
         throw new Error('Canntot added product');
@@ -60,6 +65,12 @@ export const getLogin = (req, res)=>{
 export const postLogin = async(req, res)=>{
     try {
         const user = await User.findOne({email:req.body.email}).select('+password');
+
+        if(!user){
+            errors.message = 'User not found!'
+            return res.status(400).redirect(stayPath);
+        };
+
         const password = await user.comparePassword(req.body.password);
         if(!password){
             errors.message = 'Your password is incorect!!'
@@ -193,7 +204,10 @@ export const getProfile = async(req, res)=>{
   }
 };
 export const getForgot = (req, res)=> {
-  res.status(200).render('forgot', {
+    if(isLogged){
+        return res.status(301).redirect('/');
+    }
+  return res.status(200).render('forgot', {
     errors, 
     isLogged,
     title: 'Forgot Password'
