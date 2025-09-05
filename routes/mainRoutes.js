@@ -1,9 +1,10 @@
 import express from "express";
-import { getForgot, getHome, getLogin, getProduct, getProducts, getProfile, getReset, getSignUp, logOutAll, porstSignUp, postLogin, postProduct } from "../conntrolers/mainController.js";
+import { getForgot, getHome, getLogin, getProduct, getProducts, getProfile, getReset, getSignUp, logOutAll, postSignUp, postLogin, postProduct } from "../conntrolers/mainController.js";
 const mainRouter = express.Router();
 import { errors } from "../utils/errorMessage.js";
 import { isAuthHelper, pathNow } from "../utils/isAuthHelper.js";
 import User from "../models/user.js";
+import { body } from "express-validator";
 
 //auth middleware
 mainRouter.use((req, res, next)=>{
@@ -31,7 +32,11 @@ mainRouter.get('/', getHome);
 mainRouter.get('/products', getProducts);
 mainRouter.get('/product/:id', getProduct);
 mainRouter.post('/add-product', postProduct);
-mainRouter.route('/signup').get( getSignUp).post(porstSignUp);
+mainRouter.route('/signup').get(getSignUp).post([
+  body('username').isAlpha().withMessage('Username must be between 4 and 32 characters'),
+  body('email').isEmail().withMessage('Please enter a valid email!'),
+  body('password').matches(/[0-9A-Za-z]/).isLength({ min: 8, max: 40 }).withMessage('Password must be between 8 and 40 characters')
+], postSignUp);
 mainRouter.all('/logout', logOutAll);
 mainRouter.route('/login').get(getLogin).post(postLogin);
 mainRouter.get('/profile/:id', getProfile);

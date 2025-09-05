@@ -12,9 +12,10 @@
             <p class="error-message"><%=errors.message%></p>
         <%}%>
         <form action="/signup" method="POST">
-            <input type="email" name="email" placeholder="email">
-            <input type="password" name="password" placeholder="password">
-            <input type="password" name="confirmPassword" placeholder="confirm password" >
+            <input type="text" value="<%= reqBody.username || '' %>" name="username" placeholder="Enter Username">
+            <input type="email" value="<%= reqBody.email || '' %>" name="email" placeholder="Enter Email">
+            <input type="password" value="<%= reqBody.password || '' %>" name="password" placeholder="Enter Password">
+            <input type="password" value="<%= reqBody.confirmPassword || '' %>" name="confirmPassword" placeholder="Enter Confirm Password" >
             <button type="submit">Sign Up</button>
         </form>
     </section>

@@ -2,6 +2,7 @@ import { errors } from "../utils/errorMessage.js";
 import Product from '../models/product.js'
 import User from '../models/user.js'
 import { isLogged, stayPath } from "../utils/isAuthHelper.js";
+import { validationResult } from "express-validator";
 
 
 export const getHome = async(req, res)=> {
@@ -22,7 +23,6 @@ export const getHome = async(req, res)=> {
         title:'Home Page'
     });
 };
-
 
 export const postProduct = async (req, res)=>{
   try {
@@ -50,6 +50,7 @@ export const postProduct = async (req, res)=>{
     return res.status(500).send('Interval sevrver error', + error.message)
   }
 };
+
 
 export const getLogin = (req, res)=>{
     if(isLogged){
@@ -91,7 +92,6 @@ export const postLogin = async(req, res)=>{
     }
 };
 
-
 export const getProducts = async(req, res)=> {
     try {
         let user;
@@ -115,39 +115,80 @@ export const getProducts = async(req, res)=> {
 export const getSignUp = (req, res)=>{
     return res.status(200).render('signUp', {
         errors,
-        title: 'Sign Up Page'
+        title: 'Sign Up Page',
+        reqBody: {
+            username: '',
+            email: '',
+            password: '',
+            confirmPassword: ''
+        }
     });
 };
 
+export const postSignUp = async (req, res)=> {
+    const {username, email, password, confirmPassword} = req.body;
+    const reqBody = { username, email, password, confirmPassword };
+    
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        errors.message = 'Please enter validation values!!!'
+        return res.render('signUp', {
+            errors,
+            title: 'Sign Up Page',
+            reqBody: req.body
+        });
+    }
 
-export const porstSignUp = async (req, res)=> {
-    const {email, password, confirmPassword} = req.body;
     const userExists = await User.findOne({email});
     try {
+        if(!username){
+            errors.message = 'you must be provide an username'
+            return res.status(400).render('signUp', {
+                errors,
+                title:' Sign Up',
+                reqBody:req.body
+            });
+        } 
         if(!email){
             errors.message = 'you must be provide an email'
-            return res.status(400).redirect(req.path);
+            return res.status(400).render('signUp', {
+                errors,
+                title:' Sign Up',
+                reqBody:req.body
+            });
         };
         if(userExists){
             errors.message = 'email alredy exists'
-            return res.status(400).redirect(req.path);
+            return res.status(400).render('signUp', {
+            errors,
+            title:' Sign Up',
+            reqBody:req.body
+            });
         }
 
         if(!password || !confirmPassword){
             errors.message = 'you must be privide an passwords'
-            return res.status(400).redirect(req.path);
+            return res.status(400).render('signUp', {
+                errors,
+                reqBody:req.body,
+            })
         }
 
         if(password.length < 8 && confirmPassword.length < 8){
             errors.message = 'password min length is 8 character'
-            return res.status(400).redirect(req.path);
+            return res.status(400).render('signUp', {
+                errors,
+                reqBody:req.body,
+            })
         };
 
         if(password !== confirmPassword){
             errors.message = 'passwords not same'
-            return res.status(400).redirect(req.path);
+            return res.status(400).render('signUp', {
+                errors,
+                reqBody:req.body,
+            })
         };
-
         const user = await User.create(req.body);
         req.session.isLogged = true;
         res.cookie('user', user);
@@ -195,7 +236,8 @@ export const getProfile = async(req, res)=>{
         return res.status(200).render('profile', {
             user, 
             isLogged,
-            title: `User Profile | ${user.email}`
+            title: `User Profile | ${user.email}`,
+            errors,
         });
     }
     return res.status(401).send('<h1>User not found!</h1>');
