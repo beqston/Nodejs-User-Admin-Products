@@ -24,30 +24,37 @@ export const getHome = async(req, res)=> {
     });
 };
 
-export const postProduct = async (req, res)=>{
+export const postProduct = async (req, res) => {
   try {
-    if(isLogged){
-      const userId = req.cookies.user.id; 
+    if (isLogged) {
+      const userId = req.cookies.user.id;
       const { title, price, description } = req.body;
+
       const user = await User.findById(userId);
-      const product = await Product.create({
+      if (!user) {
+        return res.status(404).send('User not found');
+      }
+
+      const product = new Product({
         title,
         price,
         description,
         user: userId
       });
 
+      await product.save();
+
+      // ✅ Push product ID only
       user.products.push(product._id);
       await user.save();
-      
-      if(!product){
-        throw new Error('Canntot added product');
-      }
-      return res.status(201).redirect('/products')
+
+      return res.status(201).redirect('/products');
     }
 
+    return res.status(401).send('Unauthorized');
   } catch (error) {
-    return res.status(500).send('Interval sevrver error', + error.message)
+    console.error(error);
+    return res.status(500).send('Internal server error: ' + error.message);
   }
 };
 
@@ -77,6 +84,13 @@ export const postLogin = async(req, res)=>{
             errors.message = 'Your password is incorect!!'
             return res.redirect('/login')
         }
+        const userCookie = req.cookies.user;
+        await User.findByIdAndUpdate(user._id, {
+        isActive: true
+    }, {
+      new: true, // returns the updated document
+      runValidators: true, // validates against the schema
+    });
         req.session.isLogged = true;
         res.cookie('user', user);
         return res.status(201).redirect(stayPath);
@@ -213,12 +227,20 @@ export const postSignUp = async (req, res)=> {
     };
 };
 
-export const logOutAll = (req, res)=>{
+export const logOutAll = async(req, res)=>{
+    const userCookie = req.cookies.user;
+    await User.findByIdAndUpdate(userCookie._id, {
+        isActive: false
+    }, {
+      new: true, // returns the updated document
+      runValidators: true, // validates against the schema
+    });
+    
     req.session.destroy(err => {
     if (err) {
         console.error('Session destruction error:', err);
         return res.status(500).send('Error destroying session');
-    }
+    };
 
     // Clear cookie after session destroyed
     res.clearCookie('connect.sid'); // default name unless you've customized it

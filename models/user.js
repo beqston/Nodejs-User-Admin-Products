@@ -96,15 +96,14 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
 
 // Validate ObjectId references before saving
 userSchema.pre('save', async function(next){
-    if(this.products && this.products.length > 0){
-        const inValid = this.products.filter(id=> !id !==mongoose.Types.ObjectId.isValid(id));
-        if(inValid.length > 0){
-            return next(new Error('Invalid product IDs provided'))
-        };
-        next();
-    };
+  if (this.products && this.products.length > 0) {
+    const invalid = this.products.filter(id => !mongoose.Types.ObjectId.isValid(id));
+    if (invalid.length > 0) {
+      return next(new Error('Invalid product IDs provided'));
+    }
+  }
+  next(); // <-- Always call next if no error
+});
 
-   
-})
 const User = mongoose.model('User', userSchema);
 export default User;
