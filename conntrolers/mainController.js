@@ -4,6 +4,7 @@ import User from '../models/user.js'
 import { isLogged, stayPath } from "../utils/isAuthHelper.js";
 import { validationResult } from "express-validator";
 
+import jwt  from "jsonwebtoken";
 
 export const getHome = async(req, res)=> {
 
@@ -84,16 +85,23 @@ export const postLogin = async(req, res)=>{
             errors.message = 'Your password is incorect!!'
             return res.redirect('/login')
         }
-        const userCookie = req.cookies.user;
         await User.findByIdAndUpdate(user._id, {
         isActive: true
     }, {
       new: true, // returns the updated document
       runValidators: true, // validates against the schema
     });
-        req.session.isLogged = true;
-        res.cookie('user', user);
-        return res.status(201).redirect(stayPath);
+    req.session.isLogged = true;
+    res.cookie('user', user);
+
+    // generate token
+    const token = jwt.sign(
+        { id: user._id },
+        process.env.TOKEN_SECRET,
+        { expiresIn: '1h' }
+    );
+    res.cookie('token', token);
+    return res.status(201).redirect(stayPath);
     } catch (error) {
         // Optional: check for a specific error message
         if (error.message === 'Assignment to constant variable.') {
@@ -141,7 +149,6 @@ export const getSignUp = (req, res)=>{
 
 export const postSignUp = async (req, res)=> {
     const {username, email, password, confirmPassword} = req.body;
-    const reqBody = { username, email, password, confirmPassword };
     
     const errors = validationResult(req);
     if(!errors.isEmpty()){
@@ -204,8 +211,25 @@ export const postSignUp = async (req, res)=> {
             })
         };
         const user = await User.create(req.body);
+        res.cookie('user', {
+            _id: user._id
+        });
         req.session.isLogged = true;
-        res.cookie('user', user);
+
+        // generate token
+        const token = jwt.sign(
+            { id: user._id },
+            process.env.TOKEN_SECRET,
+            { expiresIn: '1h' }
+        );
+        // save token in cookie
+        res.cookie('token', token, {
+        httpOnly: true,                  
+        secure: false,  
+        sameSite: 'Strict',                
+        maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+
         return res.status(201).redirect('/');
     } catch (error) {
         let errors = {};
@@ -227,6 +251,7 @@ export const postSignUp = async (req, res)=> {
     };
 };
 
+
 export const logOutAll = async(req, res)=>{
     const userCookie = req.cookies.user;
     await User.findByIdAndUpdate(userCookie._id, {
@@ -245,6 +270,7 @@ export const logOutAll = async(req, res)=>{
     // Clear cookie after session destroyed
     res.clearCookie('connect.sid'); // default name unless you've customized it
     res.clearCookie('user');
+    res.clearCookie('token');
     return res.status(301).redirect('/');
     });
 };
@@ -252,9 +278,9 @@ export const logOutAll = async(req, res)=>{
 export const getProfile = async(req, res)=>{
   try {
     const {id} = req.params;
-    const user = await User.findOne({email:req.cookies.user.email});
+    const user = await User.findById(req.cookies.user._id);
 
-    if(user && req.cookies.user && isLogged && req.cookies.user.id == id){
+    if(user && req.cookies.user && isLogged && req.cookies.user._id == id){
         return res.status(200).render('profile', {
             user, 
             isLogged,

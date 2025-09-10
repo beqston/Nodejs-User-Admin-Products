@@ -5,6 +5,7 @@ import { errors } from "../utils/errorMessage.js";
 import { isAuthHelper, isLogged, pathNow } from "../utils/isAuthHelper.js";
 import User from "../models/user.js";
 import { userValidation } from "../utils/userValidation.js";
+import authMiddleware from "../utils/authMiddleware.js";
 
 //auth middleware
 mainRouter.use((req, res, next)=>{
@@ -25,7 +26,6 @@ mainRouter.use((req, res, next)=>{
 
 // middleware if delete account user
 mainRouter.use(async(req, res, next)=>{
-
   if(isLogged){
     const userCookie = req.cookies.user;
     const user = await User.findById(userCookie._id);
@@ -45,12 +45,6 @@ mainRouter.use(async(req, res, next)=>{
   next();
 });
 
-// Error-handling middleware
-mainRouter.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('<h1>Something broke!</h1>')
-});
-
 // Crud operator router
 mainRouter.get('/', getHome);
 mainRouter.get('/products', getProducts);
@@ -59,7 +53,7 @@ mainRouter.post('/add-product', postProduct);
 mainRouter.route('/signup').get(getSignUp).post(userValidation, postSignUp);
 mainRouter.all('/logout', logOutAll);
 mainRouter.route('/login').get(getLogin).post(postLogin);
-mainRouter.get('/profile/:id', getProfile);
+mainRouter.get('/profile/:id',authMiddleware, getProfile);
 mainRouter.route('/forgot').get(getForgot).post(async(req, res)=>{
   try {
     const {email} = req.body;
@@ -77,5 +71,13 @@ mainRouter.route('/forgot').get(getForgot).post(async(req, res)=>{
   
 });
 mainRouter.get('/reset/:id', getReset);
+
+
+
+// Error-handling middleware
+mainRouter.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('<h1>Something broke!</h1>')
+});
 
 export default mainRouter;

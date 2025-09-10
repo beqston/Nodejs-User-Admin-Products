@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 
 import session from "express-session";
 import  MongoDBStore  from "connect-mongodb-session";
+import cors from 'cors';
 
 
 dotenv.config();
@@ -13,6 +14,11 @@ const port = process.env.PORT || 3000;
 
 const app =  express();
 const MongoConnect = MongoDBStore(session);
+// CORS config
+app.use(cors({
+  origin: 'http://localhost:'+port, // your frontend URL
+  credentials: true
+}));
 app.use(cookieParser());
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
