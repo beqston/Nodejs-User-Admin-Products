@@ -9,8 +9,8 @@ import jwt  from "jsonwebtoken";
 export const getHome = async(req, res)=> {
 
    if(isLogged){
-        const userCookie = req.cookies.user;
-        const user = await User.findById(userCookie._id);
+        const id = req.cookies.user.id;
+        const user = await User.findById(id);
         return res.status(200).render('index', {
         errors,
         isLogged,
@@ -28,7 +28,7 @@ export const getHome = async(req, res)=> {
 export const postProduct = async (req, res) => {
   try {
     if (isLogged) {
-      const userId = req.cookies.user._id;
+      const userId = req.cookies.user.id;
       const { title, price, description } = req.body;
 
       const user = await User.findById(userId);
@@ -119,7 +119,7 @@ export const getProducts = async(req, res)=> {
         let user;
         if(isLogged){
             const userCookie = req.cookies.user;
-            user = await User.findById(userCookie._id);
+            user = await User.findById(userCookie.id);
         }
         const products = await Product.find();
         return res.status(200).render('products', {
@@ -210,9 +210,12 @@ export const postSignUp = async (req, res)=> {
                 reqBody:req.body,
             })
         };
-        const user = await User.create(req.body);
+        const user = await User.create({
+            ...req.body,
+            image:req.file?'/uploads/'+req.file.filename:undefined
+        });
         res.cookie('user', {
-            _id: user._id
+            id: user._id
         });
         req.session.isLogged = true;
 
@@ -278,9 +281,9 @@ export const logOutAll = async(req, res)=>{
 export const getProfile = async(req, res)=>{
   try {
     const {id} = req.params;
-    const user = await User.findById(req.cookies.user._id);
+    const user = await User.findById(req.cookies.user.id);
 
-    if(user && req.cookies.user && isLogged && req.cookies.user._id == id){
+    if(user && req.cookies.user && isLogged && req.cookies.user.id == id){
         return res.status(200).render('profile', {
             user, 
             isLogged,
@@ -323,7 +326,7 @@ export const getProduct = async(req, res)=>{
 
     if(isLogged){
         const userCookie = req.cookies.user;
-        const user = await User.findById(userCookie._id);
+        const user = await User.findById(userCookie.id);
         return res.status(200).render('product', {
         isLogged,
         product,

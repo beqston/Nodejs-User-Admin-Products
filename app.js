@@ -24,7 +24,10 @@ mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
+
 app.use(express.static('public'));
+app.use('/uploads',  express.static('uploads'));
+
 // parser request body and json
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));

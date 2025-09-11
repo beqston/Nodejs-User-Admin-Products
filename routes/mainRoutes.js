@@ -6,6 +6,8 @@ import { isAuthHelper, isLogged, pathNow } from "../utils/isAuthHelper.js";
 import User from "../models/user.js";
 import { userValidation } from "../utils/userValidation.js";
 import authMiddleware from "../utils/authMiddleware.js";
+import multer from "multer";
+import path from 'path';
 
 //auth middleware
 mainRouter.use((req, res, next)=>{
@@ -27,8 +29,8 @@ mainRouter.use((req, res, next)=>{
 // middleware if delete account user
 mainRouter.use(async(req, res, next)=>{
   if(isLogged){
-    const userCookie = req.cookies.user;
-    const user = await User.findById(userCookie._id);
+    const id = req.cookies.user.id;
+    const user = await User.findById(id);
       if(!user){
         req.session.destroy(err => {
           if (err) {
@@ -45,12 +47,50 @@ mainRouter.use(async(req, res, next)=>{
   next();
 });
 
+// create uploads folder
+multer({dest:'uploads/'});
+
+
+const storage = multer.diskStorage({
+  destination:(req, file, cb)=>{
+    if(file){
+      cb(null, 'uploads');
+    }else{
+      cb(null, false);
+    }
+  },
+  filename:(req, file, cb)=>{
+    if(file){
+      const ext = path.extname(file.originalname);
+      const filename = path.basename(file.originalname, ext);
+      cb(null, filename+ext);
+    }else{
+      cb(null, false)
+    }
+  }
+});
+
+const fileFilter = (req, file, cb)=>{
+  if(file.mimetype.startsWith('image/')){
+    cb(null, true)
+  }else{
+    cb(null, false)
+  }
+};
+
+const upload = multer({storage, fileFilter});
+
 // Crud operator router
 mainRouter.get('/', getHome);
 mainRouter.get('/products', getProducts);
 mainRouter.get('/product/:id', getProduct);
 mainRouter.post('/add-product', postProduct);
-mainRouter.route('/signup').get(getSignUp).post(userValidation, postSignUp);
+
+// Upload the file first, then validate body
+mainRouter.route('/signup').get(getSignUp).post(upload.single('image'), userValidation, postSignUp);
+
+
+
 mainRouter.all('/logout', logOutAll);
 mainRouter.route('/login').get(getLogin).post(postLogin);
 mainRouter.get('/profile/:id', authMiddleware, getProfile);

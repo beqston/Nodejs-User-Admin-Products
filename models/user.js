@@ -46,6 +46,10 @@ const userSchema = new mongoose.Schema({
             message: 'Passwords do not match'
         }
     },
+    image:{
+        type:String,
+        default:'/photos/profile.png'
+    },
     role:{
     type:String,
     enum: {

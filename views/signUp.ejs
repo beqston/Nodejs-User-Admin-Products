@@ -11,11 +11,12 @@
         <%if(errors.message){%>
             <p class="error-message"><%=errors.message%></p>
         <%}%>
-        <form action="/signup" method="POST">
+        <form action="/signup" method="POST" enctype="multipart/form-data">
             <input type="text" value="<%= reqBody.username || '' %>" name="username" placeholder="Enter Username">
             <input type="email" value="<%= reqBody.email || '' %>" name="email" placeholder="Enter Email">
             <input type="password" value="<%= reqBody.password || '' %>" name="password" placeholder="Enter Password">
             <input type="password" value="<%= reqBody.confirmPassword || '' %>" name="confirmPassword" placeholder="Enter Confirm Password" >
+            <input type="file" name="image" accept="image/*" />
             <button type="submit">Sign Up</button>
         </form>
     </section>

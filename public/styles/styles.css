@@ -136,7 +136,6 @@ form button{
 .dropdown:hover .dropdown-content {
   display: block;
 }
-
 .profile{
     width: 48%;
     margin: auto;
@@ -163,18 +162,15 @@ form button{
     width: 180px !important;
     max-height: 100px;
 }
-
 .product-item{
     margin: 20px;
 }
-
 .wrapper{
     width: 300px;
     margin: auto;
     border: 2px solid green;
     padding: 30px;
 }
-
 .error-message {
     position: absolute;
     top: 40px;
@@ -190,6 +186,10 @@ form button{
     z-index: 10;
     opacity: 0;
     animation: showError 3s ease-out;
+}
+
+.rounded{
+    border-radius: 50%;
 }
 
 /* Keyframes to animate fade in and fade out */
