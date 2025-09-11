@@ -53,7 +53,7 @@ mainRouter.post('/add-product', postProduct);
 mainRouter.route('/signup').get(getSignUp).post(userValidation, postSignUp);
 mainRouter.all('/logout', logOutAll);
 mainRouter.route('/login').get(getLogin).post(postLogin);
-mainRouter.get('/profile/:id',authMiddleware, getProfile);
+mainRouter.get('/profile/:id', authMiddleware, getProfile);
 mainRouter.route('/forgot').get(getForgot).post(async(req, res)=>{
   try {
     const {email} = req.body;

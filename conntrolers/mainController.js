@@ -28,7 +28,7 @@ export const getHome = async(req, res)=> {
 export const postProduct = async (req, res) => {
   try {
     if (isLogged) {
-      const userId = req.cookies.user.id;
+      const userId = req.cookies.user._id;
       const { title, price, description } = req.body;
 
       const user = await User.findById(userId);
