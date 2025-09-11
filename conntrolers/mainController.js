@@ -5,6 +5,9 @@ import { isLogged, stayPath } from "../utils/isAuthHelper.js";
 import { validationResult } from "express-validator";
 
 import jwt  from "jsonwebtoken";
+import fs from 'fs';
+import sharp from "sharp";
+import path from "path";
 
 export const getHome = async(req, res)=> {
 
@@ -120,7 +123,8 @@ export const getProducts = async(req, res)=> {
         if(isLogged){
             const userCookie = req.cookies.user;
             user = await User.findById(userCookie.id);
-        }
+        };
+        
         const products = await Product.find();
         return res.status(200).render('products', {
             products, 
@@ -147,111 +151,105 @@ export const getSignUp = (req, res)=>{
     });
 };
 
-export const postSignUp = async (req, res)=> {
-    const {username, email, password, confirmPassword} = req.body;
-    
+export const postSignUp = async (req, res) => {
+    const { username, email, password, confirmPassword } = req.body;
     const errors = validationResult(req);
-    if(!errors.isEmpty()){
-        errors.message = 'Please enter validation values!!!'
-        return res.render('signUp', {
-            errors,
+
+    // Handle validation errors from express-validator
+    if (!errors.isEmpty()) {
+        return res.status(400).render('signUp', {
+            errors: { message: 'Please enter valid values!', details: errors.array() },
             title: 'Sign Up Page',
             reqBody: req.body
         });
     }
 
-    const userExists = await User.findOne({email});
     try {
-        if(!username){
-            errors.message = 'you must be provide an username'
+        // Manual field checks
+        if (!username || !email || !password || !confirmPassword) {
             return res.status(400).render('signUp', {
-                errors,
-                title:' Sign Up',
-                reqBody:req.body
-            });
-        } 
-        if(!email){
-            errors.message = 'you must be provide an email'
-            return res.status(400).render('signUp', {
-                errors,
-                title:' Sign Up',
-                reqBody:req.body
-            });
-        };
-        if(userExists){
-            errors.message = 'email alredy exists'
-            return res.status(400).render('signUp', {
-            errors,
-            title:' Sign Up',
-            reqBody:req.body
+                errors: { message: 'All fields are required.' },
+                title: 'Sign Up Page',
+                reqBody: req.body
             });
         }
 
-        if(!password || !confirmPassword){
-            errors.message = 'you must be privide an passwords'
+        if (password.length < 8) {
             return res.status(400).render('signUp', {
-                errors,
-                reqBody:req.body,
-            })
+                errors: { message: 'Password must be at least 8 characters long.' },
+                title: 'Sign Up Page',
+                reqBody: req.body
+            });
         }
 
-        if(password.length < 8 && confirmPassword.length < 8){
-            errors.message = 'password min length is 8 character'
+        if (password !== confirmPassword) {
             return res.status(400).render('signUp', {
-                errors,
-                reqBody:req.body,
-            })
-        };
+                errors: { message: 'Passwords do not match.' },
+                title: 'Sign Up Page',
+                reqBody: req.body
+            });
+        }
 
-        if(password !== confirmPassword){
-            errors.message = 'passwords not same'
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
             return res.status(400).render('signUp', {
-                errors,
-                reqBody:req.body,
-            })
-        };
+                errors: { message: 'Email already exists.' },
+                title: 'Sign Up Page',
+                reqBody: req.body
+            });
+        }
+
+        // Handle image upload (optional)
+        let imagePath = '/photos/profile.png';
+        if (req.file) {
+            const filename = `${req.file.filename}-new`;
+            const outputPath = path.join('uploads', filename);
+
+            await sharp(req.file.path)
+                .resize(24, 24)
+                .toFile(outputPath);
+
+            fs.unlinkSync(req.file.path); // Remove original
+            imagePath = '/uploads/' + filename;
+        }
+
+        // Create user
         const user = await User.create({
-            ...req.body,
-            image:req.file?'/uploads/'+req.file.filename:undefined
+            username,
+            email,
+            password,
+            image: imagePath
         });
-        res.cookie('user', {
-            id: user._id
-        });
-        req.session.isLogged = true;
 
-        // generate token
-        const token = jwt.sign(
-            { id: user._id },
-            process.env.TOKEN_SECRET,
-            { expiresIn: '1h' }
-        );
-        // save token in cookie
+        // Set session and cookies
+        req.session.isLogged = true;
+        res.cookie('user', { id: user._id });
+
+        const token = jwt.sign({ id: user._id }, process.env.TOKEN_SECRET, {
+            expiresIn: '1h'
+        });
+
         res.cookie('token', token, {
-        httpOnly: true,                  
-        secure: false,  
-        sameSite: 'Strict',                
-        maxAge: 7 * 24 * 60 * 60 * 1000
-    });
+            httpOnly: true,
+            secure: false,
+            sameSite: 'Strict',
+            maxAge: 7 * 24 * 60 * 60 * 1000
+        });
 
         return res.status(201).redirect('/');
     } catch (error) {
-        let errors = {};
-        if (error.name === 'ValidationError') {
-            Object.keys(error.errors).forEach(key => {
-                errors[key] = error.errors[key].message;
-            });
-        } else if (error.code === 11000) {
-            errors.email = 'Email already exists';
-        } else {
-            errors.message = error.message;
-        }
+        const errorMessage = error.name === 'ValidationError'
+            ? Object.values(error.errors).map(e => e.message).join(', ')
+            : error.code === 11000
+                ? 'Email already exists.'
+                : error.message;
 
-        // Pass back the form data to preserve user input
-        errors.message = 'user not added';
-        return res.render('index', {
-            errors
+        return res.status(500).render('signUp', {
+            errors: { message: 'User not added: ' + errorMessage },
+            title: 'Sign Up Page',
+            reqBody: req.body
         });
-    };
+    }
 };
 
 

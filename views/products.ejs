@@ -21,6 +21,10 @@
                     <h3><%=item.price%></h3>
                     <p><%=item.description%></p>
                     <a href="/product/<%=item.id%>">See More</a>
+
+                    <div>
+                        <p>Created By <span class="autor"><%=user.username%></span> </p>
+                    </div>
                 </div>
             <%})%>
 

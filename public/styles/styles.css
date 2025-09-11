@@ -191,7 +191,12 @@ form button{
 .rounded{
     border-radius: 50%;
 }
-
+.autor{
+    font-size: 20px;
+    font-weight: 700;
+    color: black;
+    text-transform: capitalize;
+}
 /* Keyframes to animate fade in and fade out */
 @keyframes showError {
     0% {
