@@ -19,6 +19,9 @@ app.use(cors({
   origin: 'http://localhost:'+port, // your frontend URL
   credentials: true
 }));
+// trust first proxy
+app.set('trust proxy', 1);
+
 app.use(cookieParser());
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
@@ -39,10 +42,12 @@ const store = new MongoConnect({
 });
 
 app.use(session({
+    name:'sessionId',
     secret: 'my secret',
     resave: false,
     saveUninitialized: false,
-    store: store
+    expires:new Date(Date.now() + 60 * 60 * 24000),
+    store: store,
 }));
 
 app.set('view engine', 'ejs');

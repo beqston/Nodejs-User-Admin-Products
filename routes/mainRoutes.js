@@ -8,6 +8,10 @@ import { userValidation } from "../utils/userValidation.js";
 import authMiddleware from "../utils/authMiddleware.js";
 import multer from "multer";
 import upload from "../utils/multer.js";
+import nodemailer from "nodemailer";
+
+import jwt from 'jsonwebtoken';
+
 
 //auth middleware
 mainRouter.use((req, res, next)=>{
@@ -50,9 +54,6 @@ mainRouter.use(async(req, res, next)=>{
 // create uploads folder
 multer({dest:'uploads/'});
 
-
-
-
 // Crud operator router
 mainRouter.get('/', getHome);
 mainRouter.get('/products', getProducts);
@@ -61,28 +62,61 @@ mainRouter.post('/add-product', postProduct);
 
 // Upload the file first, then validate body
 mainRouter.route('/signup').get(getSignUp).post(upload.single('image'), userValidation, postSignUp);
-
-
-
 mainRouter.all('/logout', logOutAll);
 mainRouter.route('/login').get(getLogin).post(postLogin);
 mainRouter.get('/profile/:id', authMiddleware, getProfile);
+
+
 mainRouter.route('/forgot').get(getForgot).post(async(req, res)=>{
   try {
     const {email} = req.body;
-    const user = User.findOne({email});
+    const user = await User.findOne({email});
     if(!user){
-      return res.status(403).redirect('/forgot')
+      return res.status(403).redirect('/forgot');
     }
+    // Create a transporter for SMTP
+    const transporter = nodemailer.createTransport({
+      host: "sandbox.smtp.mailtrap.io",
+      port: 587,
+      secure: false, // upgrade later with STARTTLS
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_PASS,
+      },
+    });
+
+    await transporter.verify();
+    const token = jwt.sign({ id: user._id }, process.env.TOKEN_SECRET, {
+        expiresIn: '1h'
+    });
+    user.token = token;
+    await user.save();
+
+    (async () => {
+      try {
+        const info = await transporter.sendMail({
+          from: '"Example Team" <team@example.com>', // sender address
+          to: "bako.rap@gmail.com", // list of receivers
+          subject: "Hello", // Subject line
+          text: `Reset your password here: http://localhost:4000/reset/${token}`, // Fallback for plain text email clients
+          html: `<p><b><a href="http://localhost:4000/reset/${token}">Reset Password</a></b></p>`, // HTML clickable link
+        });
+
+        console.log("Message sent: %s", info.messageId);
+        console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+      } catch (err) {
+        console.error("Error while sending mail", err);
+      }
+    })();
+
     
-    const random = Math.ceil(Math.random() * 100000);
-    console.log(random);
-    return res.status(201).redirect(`/reset/${random}`);
+    return res.status(201).redirect('/');
   } catch (error) {
     return res.status(500).send('Internal server error')
   }
   
 });
+
 mainRouter.get('/reset/:id', getReset);
 
 

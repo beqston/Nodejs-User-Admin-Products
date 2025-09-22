@@ -56,8 +56,9 @@ const userSchema = new mongoose.Schema({
         values: ['user', 'admin' ],
         message: 'role must be user or admin'
     },
-    default: 'user'
+        default: 'user'
     }, 
+    token: String,
     products: [
         {
             type: mongoose.Schema.ObjectId,
