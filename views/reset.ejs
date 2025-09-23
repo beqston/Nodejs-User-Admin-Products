@@ -8,9 +8,9 @@
         <%if(errors.message){%>
             <p class="error-message"><%=errors.message%></p>
         <%}%>
-        <form action="/reset" method="POST">
-            <input type="password" name="password" placeholder="Password">
-            <input type="password" name="confirmPassword" placeholder="Confirm Password">
+        <form action="/reset/<%=user.token%>" method="POST">
+            <input type="password" value="<%= reqBody.password || '' %>" name="password" placeholder="Enter Password">
+            <input type="password" value="<%= reqBody.confirmPassword || '' %>" name="confirmPassword" placeholder="Enter Confirm Password" >
             <button type="submit">Reset Password</button>
         </form>
     </section>

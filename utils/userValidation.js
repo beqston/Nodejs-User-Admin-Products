@@ -12,3 +12,9 @@ export const userValidation = [
     .matches(/[0-9A-Za-z]/).withMessage('Password must contain letters and numbers')
     .isLength({ min: 8, max: 40 }).withMessage('Password must be between 8 and 40 characters'),
 ];
+
+export const userResetValidation = [
+  body('password')
+    .matches(/[0-9A-Za-z]/).withMessage('Password must contain letters and numbers')
+    .isLength({ min: 8, max: 40 }).withMessage('Password must be between 8 and 40 characters'),
+];

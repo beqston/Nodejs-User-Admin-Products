@@ -8,6 +8,8 @@ import jwt  from "jsonwebtoken";
 import fs from 'fs';
 import sharp from "sharp";
 import path from "path";
+import nodemailer from "nodemailer";
+
 
 export const getHome = async(req, res)=> {
 
@@ -151,6 +153,7 @@ export const getSignUp = (req, res)=>{
     });
 };
 
+
 export const postSignUp = async (req, res) => {
     const { username, email, password, confirmPassword } = req.body;
     const errors = validationResult(req);
@@ -162,7 +165,7 @@ export const postSignUp = async (req, res) => {
             title: 'Sign Up Page',
             reqBody: req.body
         });
-    }
+    };
 
     try {
         // Manual field checks
@@ -188,7 +191,7 @@ export const postSignUp = async (req, res) => {
                 title: 'Sign Up Page',
                 reqBody: req.body
             });
-        }
+        };
 
         const existingUser = await User.findOne({ email });
         if (existingUser) {
@@ -301,14 +304,26 @@ export const getForgot = (req, res)=> {
   return res.status(200).render('forgot', {
     errors, 
     isLogged,
-    title: 'Forgot Password'
+    title: 'Forgot Password',
+    sendMessage:''
 });
 };
 
-export const getReset = (req, res)=>{
+export const getReset = async(req, res)=>{
+    const {token} = req.params;
+    const user = await User.findOne({token});
+    if(isLogged){
+        return res.status(301).redirect('/');
+    }
+    if(!user){
+        return res.status(404).redirect('/404');
+    };
+    
     return res.render('reset', {
         errors, 
         isLogged,
+        user,
+        reqBody:'',
         title: 'Reset Password'
     })
 }
@@ -345,3 +360,105 @@ export const getProduct = async(req, res)=>{
     return res.status(500).send('Interval server error');
   };
 };
+
+export const postForgot = async(req, res)=>{
+  try {
+    const {email} = req.body;
+    const user = await User.findOne({email});
+    if(!user){
+      return res.status(403).redirect('/forgot');
+    };
+
+    // Create a transporter for SMTP
+    const transporter = nodemailer.createTransport({
+      host: "sandbox.smtp.mailtrap.io",
+      port: 587,
+      secure: false, // upgrade later with STARTTLS
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_PASS,
+      },
+    });
+
+    await transporter.verify();
+    const token = jwt.sign({ id: user._id }, process.env.TOKEN_SECRET, {
+        expiresIn: '1h'
+    });
+    user.token = token;
+    await user.save();
+
+    (async () => {
+      try {
+        const info = await transporter.sendMail({
+          from: '"Example Team" <team@example.com>', // sender address
+          to: "bako.rap@gmail.com", // list of receivers
+          subject: "Hello", // Subject line
+          text: `Reset your password here: http://localhost:4000/reset/${token}`, // Fallback for plain text email clients
+          html: `<h1>Reset Paswword</h1><p><b><a href="http://localhost:4000/reset/${token}">Reset Password</a></b></p>`, // HTML clickable link
+        });
+
+      } catch (err) {
+        console.error("Error while sending mail", err);
+      }
+    })();
+    
+    return res.status(200).render('forgot', {
+        errors, 
+        isLogged,
+        title: 'Forgot Password',
+        sendMessage: "You Can Reset Password From Email"
+    });
+    
+  } catch (error) {
+    return res.status(500).send('Internal server error')
+  }
+}
+
+export const postReset = async(req, res)=>{
+  const {password, confirmPassword }= req.body;
+  const {token} = req.params;
+  const user = await User.findOne({token});
+  try {
+    const errors = validationResult(req);
+    // Handle validation errors from express-validator
+    if (!errors.isEmpty()) {
+      return res.status(400).render(stayPath, {
+          errors: { message: 'Please enter valid values!', details: errors.array() },
+          title: 'Sign Up Page',
+          reqBody: req.body
+      });
+    };
+
+    // Manual field checks
+    if (!password || !confirmPassword) {
+        return res.status(400).render('reset', {
+            errors: { message: 'All fields are required!' },
+            title: 'Sign Up Page',
+            reqBody: req.body
+        });
+    }
+
+    if (password.length < 8) {
+        return res.status(400).render('signUp', {
+            errors: { message: 'Password must be at least 8 characters long.' },
+            title: 'Sign Up Page',
+            reqBody: req.body
+        });
+    }
+
+    if (password !== confirmPassword) {
+        return res.status(400).render('reset', {
+            errors: { message: 'Passwords do not match.' },
+            title: 'Sign Up Page',
+            reqBody: req.body
+        });
+    };
+    user.password = password;
+    user.confirmPassword = confirmPassword;
+    await user.save();
+
+    return res.status(201).redirect('/');
+  } catch (error) {
+    return res.status(500).send('Interval Server Error!')
+  }
+}

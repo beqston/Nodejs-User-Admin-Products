@@ -9,6 +9,12 @@
             <p class="error"><%=errors.message%></p>
         </div>
     <%}%>
+    <%if(sendMessage) {%>
+        <div class="absolute">
+            <p class="send-message"><%=sendMessage%></p>
+        </div>
+    <%}%>
+
     <section class="login">
         <h2>Forgot Password</h2>
         <form action="/forgot" method="POST">

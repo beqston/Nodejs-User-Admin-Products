@@ -197,8 +197,44 @@ form button{
     color: black;
     text-transform: capitalize;
 }
+.send-message{
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    right: 50%;
+    width: 300px;
+    padding: 20px;
+    background-color: rgb(22, 21, 21);
+    border: 1px solid rgb(11, 213, 142);
+    color: rgb(49, 171, 42);
+    text-align: center;
+    z-index: 10;
+    opacity: 0;
+    animation: showMessage 4s linear;
+}
+
 /* Keyframes to animate fade in and fade out */
 @keyframes showError {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    10% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    80% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes showMessage {
     0% {
         opacity: 0;
         transform: translateY(-20px);
