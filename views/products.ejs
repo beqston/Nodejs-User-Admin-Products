@@ -23,8 +23,12 @@
                     <a href="/product/<%=item.id%>">See More</a>
 
                     <div>
-                        <p>Created By <span class="autor"><%=user.username%></span> </p>
+                        <% 
+                            const creator = users.find(user => user._id.toString() === item.user.toString());
+                        %>
+                        <p>Created By <span class="autor"><%= creator ? creator.username : 'Unknown' %></span></p>
                     </div>
+
                 </div>
             <%})%>
 

@@ -7,7 +7,7 @@ import cookieParser from "cookie-parser";
 import session from "express-session";
 import  MongoDBStore  from "connect-mongodb-session";
 import cors from 'cors';
-
+import mongoSanitize from 'mongo-sanitize';
 
 dotenv.config();
 const port = process.env.PORT || 3000;
@@ -53,6 +53,12 @@ app.use(session({
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
+// Middleware to sanitize request body, query, and params
+app.use((req, res, next) => {
+  req.body = mongoSanitize(req.body);
+  req.params = mongoSanitize(req.params);
+  next();
+});
 app.use(mainRouter);
 
 app.use((req, res)=>{

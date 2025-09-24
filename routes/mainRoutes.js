@@ -2,10 +2,10 @@ import express from "express";
 import { getForgot, getHome, getLogin, getProduct, getProducts, getProfile, getReset, getSignUp, logOutAll, postSignUp, postLogin, postProduct, postForgot, postReset } from "../conntrolers/mainController.js";
 const mainRouter = express.Router();
 import { errors } from "../utils/errorMessage.js";
-import { isAuthHelper, isLogged, pathNow, stayPath } from "../utils/isAuthHelper.js";
+import { isAuthHelper, isLogged, pathNow, stayPath } from "../middleware/isAuthHelper.js";
 import User from "../models/user.js";
 import { userResetValidation, userValidation } from "../utils/userValidation.js";
-import authMiddleware from "../utils/authMiddleware.js";
+import authMiddleware from "../middleware/authMiddleware.js";
 import multer from "multer";
 import upload from "../utils/multer.js";
 

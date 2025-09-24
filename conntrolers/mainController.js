@@ -1,7 +1,7 @@
 import { errors } from "../utils/errorMessage.js";
 import Product from '../models/product.js'
 import User from '../models/user.js'
-import { isLogged, stayPath } from "../utils/isAuthHelper.js";
+import { isLogged, stayPath } from "../middleware/isAuthHelper.js";
 import { validationResult } from "express-validator";
 
 import jwt  from "jsonwebtoken";
@@ -126,13 +126,14 @@ export const getProducts = async(req, res)=> {
             const userCookie = req.cookies.user;
             user = await User.findById(userCookie.id);
         };
-        
+        const users = await User.find();
         const products = await Product.find();
         return res.status(200).render('products', {
             products, 
             errors, 
             isLogged, 
             user,
+            users,
             title: 'All Products Page'
         });
     } catch (error) {
@@ -332,6 +333,7 @@ export const getProduct = async(req, res)=>{
   try {
 
     const {id} = req.params;
+    const users = await User.find();
     const product = await Product.findById(id);
     if(!product){
       return res.status(400).send('File Not Found!  <a href="/products">Back Products Page</a>');
@@ -344,6 +346,7 @@ export const getProduct = async(req, res)=>{
         isLogged,
         product,
         user,
+        users,
         errors,
         title: `Product Item | ${product.title}`
     });
@@ -353,6 +356,7 @@ export const getProduct = async(req, res)=>{
         isLogged,
         product,
         errors,
+        users,
         title: `Product Item | ${product.title}`
     });
     
