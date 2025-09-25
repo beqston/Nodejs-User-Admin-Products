@@ -59,15 +59,19 @@ app.use((req, res, next) => {
   req.params = mongoSanitize(req.params);
   next();
 });
-app.use(mainRouter);
 
+// Register main router
+app.use(mainRouter);
+// Page not found
 app.use((req, res)=>{
     res.status(404).render('404');
 });
+// Error Middleware
 app.use((err, req, res, next) => {
   console.error(err.stack)
   res.status(500).send('Something broke!')
-})
+});
+// Listen server and running
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
