@@ -1,5 +1,5 @@
 import express from "express";
-import { getForgot, getHome, getLogin, getProduct, getProducts, getProfile, getReset, getSignUp, logOutAll, postSignUp, postLogin, postProduct, postForgot, postReset } from "../conntrolers/mainController.js";
+import { getForgot, getHome, getLogin, getProduct, getProducts, getProfile, getReset, getSignUp, logOutAll, postSignUp, postLogin, postProduct, postForgot, postReset, getMyPoructs } from "../conntrolers/mainController.js";
 const mainRouter = express.Router();
 import { errors } from "../utils/errorMessage.js";
 import { isAuthHelper, isLogged, pathNow, stayPath } from "../middleware/isAuthHelper.js";
@@ -62,6 +62,7 @@ mainRouter.route('/signup').get(getSignUp).post(upload.single('image'), userVali
 mainRouter.all('/logout', logOutAll);
 mainRouter.route('/login').get(getLogin).post(postLogin);
 mainRouter.get('/profile/:id', authMiddleware, getProfile);
+mainRouter.get('/my-products/:id', getMyPoructs);
 mainRouter.route('/forgot').get(getForgot).post(postForgot);
 mainRouter.route('/reset/:token').get(getReset).post(userResetValidation, postReset);
 

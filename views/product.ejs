@@ -15,10 +15,8 @@
             <p><%=product.price%></p>
             <p><%=product.description%></p>
             <div>
-                <% 
-                    const creator = users.find(user => user._id.toString() === item.user.toString());
-                %>
-                <p>Created By <span class="autor"><%= creator ? creator.username : 'Unknown' %></span></p>
+
+                <p>Created By <span class="autor"><%= username ? username : 'Unknown' %></span></p>
             </div>
         </div>
         <a href="/products">Back To Products Page</a>

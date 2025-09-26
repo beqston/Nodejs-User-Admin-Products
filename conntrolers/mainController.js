@@ -9,6 +9,7 @@ import fs from 'fs';
 import sharp from "sharp";
 import path from "path";
 import nodemailer from "nodemailer";
+import { title } from "process";
 
 
 export const getHome = async(req, res)=> {
@@ -154,7 +155,6 @@ export const getSignUp = (req, res)=>{
     });
 };
 
-
 export const postSignUp = async (req, res) => {
     const { username, email, password, confirmPassword } = req.body;
     const errors = validationResult(req);
@@ -256,7 +256,6 @@ export const postSignUp = async (req, res) => {
     }
 };
 
-
 export const logOutAll = async(req, res)=>{
     const userCookie = req.cookies.user;
     await User.findByIdAndUpdate(userCookie._id, {
@@ -273,7 +272,7 @@ export const logOutAll = async(req, res)=>{
     };
 
     // Clear cookie after session destroyed
-    res.clearCookie('connect.sid'); // default name unless you've customized it
+    res.clearCookie('sessionId'); // default name unless you've customized it
     res.clearCookie('user');
     res.clearCookie('token');
     return res.status(301).redirect('/');
@@ -285,12 +284,14 @@ export const getProfile = async(req, res)=>{
     const {id} = req.params;
     const user = await User.findById(req.cookies.user.id);
 
+    const userPosts = await Product.find({user:id});
+
     if(user && req.cookies.user && isLogged && req.cookies.user.id == id){
         return res.status(200).render('profile', {
             user, 
             isLogged,
             title: `User Profile | ${user.email}`,
-            errors,
+            userPosts
         });
     }
     return res.status(401).send('<h1>User not found!</h1>');
@@ -298,6 +299,7 @@ export const getProfile = async(req, res)=>{
     return res.status(500).send(`<h1>Internal server error: ${error.message}</h1>`)
   }
 };
+
 export const getForgot = (req, res)=> {
     if(isLogged){
         return res.status(301).redirect('/');
@@ -339,6 +341,8 @@ export const getProduct = async(req, res)=>{
       return res.status(400).send('File Not Found!  <a href="/products">Back Products Page</a>');
     };
 
+    const {username} = users.find(user=> user._id.toString() === product.user._id.toString());
+
     if(isLogged){
         const userCookie = req.cookies.user;
         const user = await User.findById(userCookie.id);
@@ -348,6 +352,7 @@ export const getProduct = async(req, res)=>{
         user,
         users,
         errors,
+        username,
         title: `Product Item | ${product.title}`
     });
     };
@@ -357,6 +362,7 @@ export const getProduct = async(req, res)=>{
         product,
         errors,
         users,
+        username,
         title: `Product Item | ${product.title}`
     });
     
@@ -465,4 +471,27 @@ export const postReset = async(req, res)=>{
   } catch (error) {
     return res.status(500).send('Interval Server Error!')
   }
+}
+
+
+
+export const getMyPoructs = async(req, res)=>{
+    try {
+        if(!isLogged){
+            return res.status(204).redirect('/');
+        };
+
+        const {id} = req.cookies.user;
+        const user = await User.findById(req.cookies.user.id);
+        const myProducts = await Product.find({ user: id }).populate('user');
+        
+        return res.status(200).render('myProducts', {
+            user,
+            isLogged,
+            title:`${user.username}'s Products`,
+            myProducts
+        })
+    } catch (error) {
+        return res.status(500).send('<h1>Interval server error!!!</h1>', error)
+    }
 }
