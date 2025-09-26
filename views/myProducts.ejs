@@ -8,10 +8,10 @@
     
 
     <div class="products-cnt">
-        <%if(myProducts.length == 0) {%>
+        <%if(user.products.length == 0) {%>
             <h2>Product Not Found!</h2>
         <%} else {%>
-            <% myProducts.forEach((item)=> { %>
+            <% user.products.forEach((item)=> { %>
                 <div class="product-wrap">
                     <h2><%=item.title%></h2>
                     <h3><%=item.price%></h3>

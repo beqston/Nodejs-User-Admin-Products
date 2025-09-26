@@ -481,15 +481,13 @@ export const getMyPoructs = async(req, res)=>{
             return res.status(204).redirect('/');
         };
 
-        const {id} = req.cookies.user;
-        const user = await User.findById(req.cookies.user.id);
-        const myProducts = await Product.find({ user: id }).populate('user');
+        const user = await User.findById(req.cookies.user.id).populate('products');
+        console.log(user)
         
         return res.status(200).render('myProducts', {
-            user,
             isLogged,
             title:`${user.username}'s Products`,
-            myProducts
+            user
         })
     } catch (error) {
         return res.status(500).send('<h1>Interval server error!!!</h1>', error)
