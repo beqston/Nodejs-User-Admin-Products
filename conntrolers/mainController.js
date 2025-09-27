@@ -231,7 +231,7 @@ export const postSignUp = async (req, res) => {
                 .toFile(outputPath);
 
             fs.unlinkSync(req.file.path); // Remove original
-            imagePath = outputPath;
+            imagePath = '/'+ outputPath;
         }
 
         // Create user
