@@ -6,7 +6,7 @@ export const userValidation = [
     .isLength({ min: 4, max: 32 }).withMessage('Username must be between 4 and 32 characters').trim().escape(),
 
   body('email')
-    .isEmail().withMessage('Please enter a valid email!').trim().normalizeEmail(),
+    .isEmail().withMessage('Please enter a valid email!').trim(),
 
   body('password')
     .matches(/[0-9A-Za-z]/).withMessage('Password must contain letters and numbers')
@@ -31,4 +31,7 @@ export const productValidation = [
   body('description')
     .matches(/[0-9A-Za-z]/).withMessage('Password must contain letters and numbers')
     .isLength({ min: 2, max: 120 }).withMessage('Description must be between 2 and 120 characters').escape(),
+  body('image')
+      .isString()
+      .withMessage('Image must be a string (e.g., URL or base64).')
 ];

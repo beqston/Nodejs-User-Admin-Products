@@ -4,7 +4,7 @@ const mainRouter = express.Router();
 import { errors } from "../utils/errorMessage.js";
 import { isAuthHelper, isLogged, pathNow, stayPath } from "../middleware/isAuthHelper.js";
 import User from "../models/user.js";
-import { productValidation, userResetValidation, userValidation } from "../utils/userValidation.js";
+import { productValidation, userResetValidation, userValidation } from "../utils/Validation.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import multer from "multer";
 import upload from "../utils/multer.js";
@@ -55,7 +55,7 @@ multer({dest:'uploads/'});
 mainRouter.get('/', getHome);
 mainRouter.get('/products', getProducts);
 mainRouter.get('/product/:id', getProduct);
-mainRouter.post('/add-product', productValidation, postProduct);
+mainRouter.post('/add-product', productValidation, upload.single('image'), postProduct);
 
 // Upload the file first, then validate body
 mainRouter.route('/signup').get(getSignUp).post(upload.single('image'), userValidation, postSignUp);

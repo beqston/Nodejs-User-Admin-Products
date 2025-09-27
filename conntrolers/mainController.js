@@ -35,17 +35,33 @@ export const postProduct = async (req, res) => {
   try {
     if (isLogged) {
       const userId = req.cookies.user.id;
-      const { title, price, description } = req.body;
+      const { title, price, description, image } = req.body;
 
       const user = await User.findById(userId);
       if (!user) {
         return res.status(404).send('User not found');
       }
 
+              // Handle image upload (optional)
+        let imagePath = '/photos/profile.png';
+        if (req.file) {
+            const ext = path.extname(req.file)
+            const filename = `${req.file.filename}-new${ext}`;
+            const outputPath = path.join('uploads', filename);
+
+            await sharp(req.file.path)
+                .resize(24, 24)
+                .toFile(outputPath);
+
+            fs.unlinkSync(req.file.path); // Remove original
+            imagePath = '/uploads/' + filename;
+        }
+
       const product = new Product({
         title,
         price,
         description,
+        image:imagePath,
         user: userId
       });
 
@@ -206,7 +222,8 @@ export const postSignUp = async (req, res) => {
         // Handle image upload (optional)
         let imagePath = '/photos/profile.png';
         if (req.file) {
-            const filename = `${req.file.filename}-new`;
+            const ext = path.extname(req.file.originalname);
+            const filename = `${req.file.filename}-new${ext}`;
             const outputPath = path.join('uploads', filename);
 
             await sharp(req.file.path)
@@ -214,7 +231,7 @@ export const postSignUp = async (req, res) => {
                 .toFile(outputPath);
 
             fs.unlinkSync(req.file.path); // Remove original
-            imagePath = '/uploads/' + filename;
+            imagePath = outputPath;
         }
 
         // Create user
@@ -473,8 +490,6 @@ export const postReset = async(req, res)=>{
   }
 }
 
-
-
 export const getMyPoructs = async(req, res)=>{
     try {
         if(!isLogged){
@@ -482,7 +497,6 @@ export const getMyPoructs = async(req, res)=>{
         };
 
         const user = await User.findById(req.cookies.user.id).populate('products');
-        console.log(user)
         
         return res.status(200).render('myProducts', {
             isLogged,
