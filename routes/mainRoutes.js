@@ -55,7 +55,7 @@ multer({dest:'uploads/'});
 mainRouter.get('/', getHome);
 mainRouter.get('/products', getProducts);
 mainRouter.get('/product/:id', getProduct);
-mainRouter.post('/add-product', productValidation, upload.single('image'), postProduct);
+mainRouter.post('/add-product', upload.single('image'), productValidation, postProduct);
 
 // Upload the file first, then validate body
 mainRouter.route('/signup').get(getSignUp).post(upload.single('image'), userValidation, postSignUp);

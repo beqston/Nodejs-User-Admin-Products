@@ -170,6 +170,8 @@ form button{
     margin: auto;
     border: 2px solid green;
     padding: 30px;
+    display: grid;
+    place-items: center;
 }
 .error-message {
     position: absolute;

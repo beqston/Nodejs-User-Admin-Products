@@ -9,7 +9,6 @@ import fs from 'fs';
 import sharp from "sharp";
 import path from "path";
 import nodemailer from "nodemailer";
-import { title } from "process";
 
 
 export const getHome = async(req, res)=> {
@@ -42,19 +41,19 @@ export const postProduct = async (req, res) => {
         return res.status(404).send('User not found');
       }
 
-              // Handle image upload (optional)
-        let imagePath = '/photos/profile.png';
+        // Handle image upload (optional)
+        let imagePath = '';
         if (req.file) {
-            const ext = path.extname(req.file)
+            const ext = path.extname(req.file.originalname);
             const filename = `${req.file.filename}-new${ext}`;
             const outputPath = path.join('uploads', filename);
 
             await sharp(req.file.path)
-                .resize(24, 24)
+                .resize(120, 120)
                 .toFile(outputPath);
 
             fs.unlinkSync(req.file.path); // Remove original
-            imagePath = '/uploads/' + filename;
+            imagePath = '/'+ outputPath;
         }
 
       const product = new Product({
