@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import mainRouter from "./routes/mainRoutes.js";
 import cookieParser from "cookie-parser";
 
+import checkTokenExpiry from "./utils/tokenExpire.js";
 import session from "express-session";
 import  MongoDBStore  from "connect-mongodb-session";
 import cors from 'cors';
@@ -19,6 +20,7 @@ app.use(cors({
   origin: 'http://localhost:'+port, // your frontend URL
   credentials: true
 }));
+
 // trust first proxy
 app.set('trust proxy', 1);
 
@@ -49,6 +51,7 @@ app.use(session({
     expires:new Date(Date.now() + 60 * 60 * 24000),
     store: store,
 }));
+app.use(checkTokenExpiry);
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');

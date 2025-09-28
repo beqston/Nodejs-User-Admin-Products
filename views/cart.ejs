@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+ <%- include('partials/head') %>
+<body>
+    <%- include('partials/header') %>
+    <h1>Cart List</h1>
+
+    <%if(cart.length == 0){%>
+        <p class="center">Cart Empty</p>
+    <%} else {%>
+        <div class="cart-wrap">
+            <%cart.forEach((item)=>{%>
+                <div class="center">
+                    <p class="quantity">quantity: <%=item.quantity%></p>
+                    <h2><%=item.product.title%></h2>
+                    <h3><%=item.product.price%></h3>
+                    <p><%=item.product.description%></p>
+                    <% 
+                        const creator = users.find(user => user._id.toString() === item.product.user.toString());
+                    %>
+                    <%if(isLogged){%>
+                        <div class="cart-operation">
+                            <form action="/cart/<%=item.product._id.toString() %>" method="POST">
+                                <input type="submit" value="Add Cart">
+                            </form>
+                            <% if (creator) { %>
+                                <button id="hidenBTN" onclick="deleteProductFromCart('<%= item.product._id.toString() %>')" >Remove From Cart</button>
+                            <% } %>
+                        </div>
+                    <%}%>
+                </div>
+            <%})%>
+        </div>
+    <%}%>
+
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

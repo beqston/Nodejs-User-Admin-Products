@@ -1,5 +1,5 @@
 import express from "express";
-import { getForgot, getHome, getLogin, getProduct, getProducts, getProfile, getReset, getSignUp, logOutAll, postSignUp, postLogin, postProduct, postForgot, postReset, getMyPoructs } from "../conntrolers/mainController.js";
+import { getForgot, getHome, getLogin, getProduct, getProducts, getProfile, getReset, getSignUp, logOutAll, postSignUp, postLogin, postProduct, postForgot, postReset, getMyPoructs, getApiAllUsers, getApiAllProducts, getCart, addToCart, deleteFromCart } from "../conntrolers/mainController.js";
 const mainRouter = express.Router();
 import { errors } from "../utils/errorMessage.js";
 import { isAuthHelper, isLogged, pathNow } from "../middleware/isAuthHelper.js";
@@ -48,11 +48,11 @@ mainRouter.use(async(req, res, next)=>{
 });
 
 // create uploads folder
-multer({dest:'uploads/user'});
-multer({dest:'uploads/product'});
+multer({dest:'uploads/users'});
+multer({dest:'uploads/products'});
 
-const userImage = upload('user');
-const productImage = upload('product');
+const productImage = upload('products');
+const userImage = upload('users');
 
 // Crud operator router
 mainRouter.get('/', getHome);
@@ -68,11 +68,18 @@ mainRouter.get('/profile/:id', authMiddleware, getProfile);
 mainRouter.get('/my-products/:id', getMyPoructs);
 mainRouter.route('/forgot').get(getForgot).post(postForgot);
 mainRouter.route('/reset/:token').get(getReset).post(userResetValidation, postReset);
+mainRouter.get('/cart', getCart);
+mainRouter.route('/cart/:id').post(addToCart).delete(deleteFromCart);
+// get all users
+mainRouter.get('/api/v1/users', getApiAllUsers);
+// get all products
+mainRouter.get('/api/v1/products', getApiAllProducts);
 
 // Error-handling middleware
 mainRouter.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send('<h1>Something broke!</h1>')
 });
+
 
 export default mainRouter;

@@ -16,9 +16,21 @@
             <p><%=product.price%></p>
             <p><%=product.description%></p>
             <div>
-
                 <p>Created By <span class="autor"><%= username ? username : 'Unknown' %></span></p>
             </div>
+            <% 
+                const creator = users.find(user => user._id.toString() === product._id.toString());
+            %>
+            <%if(isLogged){%>
+                <div class="cart-operation">
+                    <form action="/cart/<%=product._id.toString() %>" method="POST">
+                        <input type="submit" value="Add Cart">
+                    </form>
+                    <% if (creator) { %>
+                        <button onclick="deleteProductFromCart('<%= product._id.toString() %>')" type="submit">Remove From Cart</button>
+                    <% } %>
+                </div>
+            <%}%>
         </div>
         <a href="/products">Back To Products Page</a>
     </section>

@@ -10,6 +10,7 @@ import sharp from "sharp";
 import path from "path";
 import nodemailer from "nodemailer";
 
+const cart =[];
 
 export const getHome = async(req, res)=> {
 
@@ -46,7 +47,7 @@ export const postProduct = async (req, res) => {
         if (req.file) {
             const ext = path.extname(req.file.originalname);
             const filename = `${req.file.filename}-new${ext}`;
-            const outputPath = path.join('uploads', filename);
+            const outputPath = path.join('uploads/products', filename);
 
             await sharp(req.file.path)
                 .resize(120, 120)
@@ -75,7 +76,6 @@ export const postProduct = async (req, res) => {
 
     return res.status(401).send('Unauthorized');
   } catch (error) {
-    console.error(error);
     return res.status(500).send('Internal server error: ' + error.message);
   }
 };
@@ -223,7 +223,7 @@ export const postSignUp = async (req, res) => {
         if (req.file) {
             const ext = path.extname(req.file.originalname);
             const filename = `${req.file.filename}-new${ext}`;
-            const outputPath = path.join('uploads', filename);
+            const outputPath = path.join('uploads/users', filename);
 
             await sharp(req.file.path)
                 .resize(24, 24)
@@ -506,3 +506,102 @@ export const getMyPoructs = async(req, res)=>{
         return res.status(500).send('<h1>Interval server error!!!</h1>', error)
     }
 }
+
+export const getApiAllUsers = async(req, res)=>{
+   try {
+    const users = await User.find();
+    if(!users){
+        return res.status(200).json({
+            status:'succses',
+            data:[]
+        })
+    };
+    return res.status(200).json({
+        stattus:'suscess',
+        data:users
+    })
+   } catch (error) {
+    return res.status(500).json({
+        status:'fail',
+        message:'Interval server error!'
+    })
+   }
+};
+
+export const getApiAllProducts = async(req, res)=>{
+   try {
+    const products = await Product.find();
+    if(!products){
+        return res.status(200).json({
+            status:'succses',
+            data:[]
+        })
+    };
+    return res.status(200).json({
+        stattus:'suscess',
+        data:products
+    })
+   } catch (error) {
+    return res.status(500).json({
+        status:'fail',
+        message:'Interval server error!'
+    })
+   }
+}
+
+export const getCart = async (req, res)=>{
+    const users = await User.find();
+     if(isLogged){
+        const id = req.cookies.user.id;
+        const user = await User.findById(id);
+        return res.status(200).render('cart', {
+        isLogged,
+        user,
+        title: 'Cart List',
+        cart,
+        users
+    });
+   }
+    return res.status(200).render('cart', {
+        isLogged,
+        title:'Home Page',
+        cart,
+        users
+    });
+}
+
+export const addToCart = async (req, res) => {
+    const { id } = req.params;
+    const product = await Product.findById(id);
+    if (!product) {
+        return res.status(404).send("Product not found");
+    }
+
+    const existingItem = cart.find(item => item.product._id.toString() === id);
+
+    if (existingItem) {
+        existingItem.quantity += 1;
+    } else {
+        cart.push({
+            quantity: 1,
+            product
+        });
+    }
+
+    return res.status(302).redirect(stayPath);
+};
+
+
+export const deleteFromCart = async (req, res) => {
+    const { id } = req.params;
+    const product = await Product.findById(id);
+    if (!product) {
+        return res.status(404).send("Product not found");
+    }
+
+    // Filter out the product from the cart
+    const filteredCart = cart.filter(item => item.product._id.toString() !== id);
+    cart.length = 0;
+    cart.push(...filteredCart);
+    return res.status(200)
+};

@@ -21,11 +21,22 @@
                     <h3><%=item.price%></h3>
                     <p><%=item.description%></p>
                     <a href="/product/<%=item.id%>">See More</a>
+                    <% 
+                        const creator = users.find(user => user._id.toString() === item.user.toString());
+                    %>
+                    <%if(isLogged){%>
+                        <div class="cart-operation">
+                            <form action="/cart/<%=item._id.toString() %>" method="POST">
+                                <input type="submit" value="Add Cart">
+                            </form>
+                            <% if (creator) { %>
+                                <button onclick="deleteProductFromCart('<%= item._id.toString() %>')">Remove From Cart</button>
+                            <% } %>
+                        </div>
+                    <%}%>
 
                     <div>
-                        <% 
-                            const creator = users.find(user => user._id.toString() === item.user.toString());
-                        %>
+
                         <p>Created By <span class="autor"><%= creator ? creator.username : 'Unknown' %></span></p>
                     </div>
 
@@ -35,10 +46,7 @@
         <%}%>
     </div>
 
-       
-
-    
-
-
+    <script src="/js/main.js"></script>
 </body>
+
 </html>
