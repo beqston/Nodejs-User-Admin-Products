@@ -2,13 +2,12 @@ import express from "express";
 import { getForgot, getHome, getLogin, getProduct, getProducts, getProfile, getReset, getSignUp, logOutAll, postSignUp, postLogin, postProduct, postForgot, postReset, getMyPoructs } from "../conntrolers/mainController.js";
 const mainRouter = express.Router();
 import { errors } from "../utils/errorMessage.js";
-import { isAuthHelper, isLogged, pathNow, stayPath } from "../middleware/isAuthHelper.js";
+import { isAuthHelper, isLogged, pathNow } from "../middleware/isAuthHelper.js";
 import User from "../models/user.js";
 import { productValidation, userResetValidation, userValidation } from "../utils/Validation.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import multer from "multer";
 import upload from "../utils/multer.js";
-
 
 //auth middleware
 mainRouter.use((req, res, next)=>{
@@ -49,16 +48,20 @@ mainRouter.use(async(req, res, next)=>{
 });
 
 // create uploads folder
-multer({dest:'uploads/'});
+multer({dest:'uploads/user'});
+multer({dest:'uploads/product'});
+
+const userImage = upload('user');
+const productImage = upload('product');
 
 // Crud operator router
 mainRouter.get('/', getHome);
 mainRouter.get('/products', getProducts);
 mainRouter.get('/product/:id', getProduct);
-mainRouter.post('/add-product', upload.single('image'), productValidation, postProduct);
+mainRouter.post('/add-product', productImage.single('image'), productValidation, postProduct);
 
 // Upload the file first, then validate body
-mainRouter.route('/signup').get(getSignUp).post(upload.single('image'), userValidation, postSignUp);
+mainRouter.route('/signup').get(getSignUp).post(userImage.single('image'), userValidation, postSignUp);
 mainRouter.all('/logout', logOutAll);
 mainRouter.route('/login').get(getLogin).post(postLogin);
 mainRouter.get('/profile/:id', authMiddleware, getProfile);
