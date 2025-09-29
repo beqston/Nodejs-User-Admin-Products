@@ -9,6 +9,7 @@ import session from "express-session";
 import  MongoDBStore  from "connect-mongodb-session";
 import cors from 'cors';
 import mongoSanitize from 'mongo-sanitize';
+import adminRouter from "./routes/adminRoutes.js";
 
 dotenv.config();
 const port = process.env.PORT || 3000;
@@ -65,6 +66,8 @@ app.use((req, res, next) => {
 
 // Register main router
 app.use(mainRouter);
+// register admin router
+app.use(adminRouter);
 // Page not found
 app.use((req, res)=>{
     res.status(404).render('404');

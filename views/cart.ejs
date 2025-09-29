@@ -15,25 +15,19 @@
                     <h2><%=item.product.title%></h2>
                     <h3><%=item.product.price%></h3>
                     <p><%=item.product.description%></p>
-                    <% 
-                        const creator = users.find(user => user._id.toString() === item.product.user.toString());
-                    %>
+
                     <%if(isLogged){%>
                         <div class="cart-operation">
                             <form action="/cart/<%=item.product._id.toString() %>" method="POST">
                                 <input type="submit" value="Add Cart">
                             </form>
-                            <% if (creator) { %>
-                                <button id="hidenBTN" onclick="deleteProductFromCart('<%= item.product._id.toString() %>')" >Remove From Cart</button>
-                            <% } %>
+                            <button id="hidenBTN" onclick="deleteProductFromCart('<%= item.product._id.toString() %>')" >Remove From Cart</button>
                         </div>
                     <%}%>
                 </div>
             <%})%>
         </div>
     <%}%>
-
-
     <script src="/js/main.js"></script>
 </body>
 </html>

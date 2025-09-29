@@ -20,3 +20,19 @@ async function deleteProductFromCart(productId) {
         console.error("Error deleting product:", error.message);
     }
 }
+
+function editUser(index){
+    document.getElementById('edit-user').style.display = 'block';
+}
+
+function closeEdit() {
+  document.querySelectorAll('.close-edit').forEach((item) => {
+    item.addEventListener('click', () => {
+      const editContainer = item.closest('.edit-user');
+      if (editContainer) {
+        editContainer.style.display = 'none';
+      }
+    });
+  });
+}
+document.addEventListener('DOMContentLoaded', closeEdit);

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+ <%- include('../partials/head') %>
+<body>
+    <%- include('../partials/adminHeader') %>
+
+    <h1>All Users</h1>
+    <section class="wrapper-section">
+        <%users.forEach((user, index)=>{%>
+            <div class="wrapper">
+                <h2><%=user.username%></h2>
+                <h3><%=user.email%></h3>
+                <div>
+                    <button class="admin-btn" onclick="editUser('<%=index%>')">Edit</button>
+                    <button class="admin-btn">Delete</button>
+                </div>
+            </div>
+
+            <div class="edit-user" id="edit-user<%index%>">
+                <form action="/admin/user/<%=user._id%>" method="POST" enctype="multipart/form-data">
+                    <input type="text" value="<%= user.username || '' %>" name="username" placeholder="Enter Username">
+                    <input type="email" value="<%= user.email || '' %>" name="email" placeholder="Enter Email">
+                    <input type="password" name="password" placeholder="Enter Password">
+                    <input type="password" name="confirmPassword" placeholder="Enter Confirm Password" >
+                    <input type="file" name="image" value="<%=user.image%>" accept="image/*" />
+                    <button type="submit">Edit User</button>
+                </form>
+                <img onclick="closeEdit()" class="close-edit" src="/photos/close.png" alt="close">
+            </div>
+        <%})%>
+
+
+
+
+    </section>
+
+    <script src="/js/main.js"></script>
+
+</body>
+</html>
