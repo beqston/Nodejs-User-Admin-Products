@@ -21,18 +21,38 @@ async function deleteProductFromCart(productId) {
     }
 }
 
-function editUser(index){
-    document.getElementById('edit-user').style.display = 'block';
+async function editUser(id, event) {
+    event.preventDefault(); // Prevent default form submission
+    
+    try {
+        const form = document.getElementById('edit-user-form');
+        if (!form) {
+            console.error('Edit form not found');
+            return;
+        }
+
+        const formData = new FormData(form);
+        
+        // Only include password fields if they're not empty
+        if (!formData.get('password')) {
+            formData.delete('password');
+            formData.delete('confirmPassword');
+        }
+
+        const response = await fetch(`/admin/user/${id}/edit`, {
+            method: "PATCH",
+            body: formData  // Let the browser set the correct Content-Type with boundary
+        });
+
+        if (!response.ok) {
+            const error = await response.json().catch(() => ({}));
+            throw new Error(error.message || `Failed to update user: ${response.statusText}`);
+        }
+        window.location.href = "/admin/users";
+    } catch (error) {
+        console.error('Error in editUser:', error);
+        alert(error.message || 'An error occurred while updating the user');
+    }
 }
 
-function closeEdit() {
-  document.querySelectorAll('.close-edit').forEach((item) => {
-    item.addEventListener('click', () => {
-      const editContainer = item.closest('.edit-user');
-      if (editContainer) {
-        editContainer.style.display = 'none';
-      }
-    });
-  });
-}
-document.addEventListener('DOMContentLoaded', closeEdit);
+

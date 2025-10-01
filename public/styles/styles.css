@@ -180,6 +180,17 @@ form button{
     display: grid;
     place-items: center;
 }
+.wrapper a, .wrapper button{
+    color: whitesmoke;
+    font-weight: 700;
+}
+#edit{
+    padding: 0;
+}
+#edit a{
+    display: inline-block;
+    padding: 8px;
+}
 .error-message {
     position: absolute;
     top: 40px;
@@ -276,13 +287,14 @@ button, input[type="submit"]{
     position: absolute;
     top: -100px;
     z-index: 20;
-    display: none;
+    display: block;
     background-color: white;
     border: 2px solid red;
     width: 100%;
     height: 80svh;
     padding-top: 30px;
 }
+
 
 .close-edit{
     position: absolute;

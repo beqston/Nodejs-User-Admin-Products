@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+ <%- include('../partials/head') %>
+<body>
+    <%- include('../partials/adminHeader') %>
+
+    <section class="wrapper-section">
+        <div class="edit-user" id="edit-user">
+            <h1>Edit User: <%=editUser.username%></h1>
+            <%if(errors){%>
+                <p class="error"><%=errors.message%></p>
+            <%}%>
+              <form onsubmit="editUser('<%=editUser._id%>', event)" id="edit-user-form">
+                <input type="text" value="<%=editUser.username %>" name="username" placeholder="Enter Username" required>
+                <input type="email" value="<%=editUser.email%>" name="email" placeholder="Enter Email" required>
+                <input type="password" name="password" placeholder="Enter New Password (leave blank to keep current)">
+                <input type="password" name="confirmPassword" placeholder="Confirm New Password">
+                <input type="file" name="image" accept="image/*" />
+                <button type="submit">Update User</button>
+            </form>
+            <a href="/admin/users"><img class="close-edit" src="/photos/close.png" alt="close"></a>
+        </div>
+
+    </section>
+
+    <script src="/js/main.js"></script>
+
+</body>
+</html>
