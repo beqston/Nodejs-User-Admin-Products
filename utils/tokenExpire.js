@@ -15,6 +15,8 @@ export default function checkTokenExpiry(req, res, next) {
     if (err.name === 'TokenExpiredError') {
       // Token expired - clear the cookie
       res.clearCookie('token');
+      res.clearCookie('token');
+      res.clearCookie('sessionId');
     }
     next();
   }

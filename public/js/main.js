@@ -50,9 +50,33 @@ async function editUser(id, event) {
         }
         window.location.href = "/admin/users";
     } catch (error) {
+        const errorMessage = document.getElementById('error');
+        errorMessage.style.display ='block'
+        errorMessage.style.textAlign ='center'
+        errorMessage.textContent = `${error.message}`
         console.error('Error in editUser:', error);
         alert(error.message || 'An error occurred while updating the user');
     }
 }
 
-
+async function deleteUser(id, event) {
+    event.preventDefault();
+    try {
+        const res = await fetch(`/admin/user/${id}/delete`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!res.ok) {
+            const error = await res.json().catch(() => ({}));
+            throw new Error(error.message || 'Failed to delete user.');
+        }
+        // Handle success (e.g. show a success message, refresh UI)
+        console.log('User deleted successfully');
+        window.location.href = '/admin/users'; 
+    } catch (err) {
+        console.error('Delete failed:', err.message);
+        // Optional: Show error to user (e.g. alert or toast)
+    }
+}

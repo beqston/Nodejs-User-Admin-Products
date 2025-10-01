@@ -207,7 +207,9 @@ form button{
     opacity: 0;
     animation: showError 3s ease-out;
 }
-
+#error{
+    display: none;
+}
 .rounded{
     border-radius: 50%;
 }

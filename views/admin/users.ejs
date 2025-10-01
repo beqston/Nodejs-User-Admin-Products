@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
- <%- include('../partials/head') %>
+    <%- include('../partials/head') %>
 <body>
     <%- include('../partials/adminHeader') %>
 
@@ -12,7 +12,7 @@
                 <h3><%=user.email%></h3>
                 <div>
                     <button id="edit" class="admin-btn"><a href="/admin/user/<%=user._id%>/edit">Edit</a></button>
-                    <button class="admin-btn">Delete</button>
+                    <button type="button" onclick="deleteUser('<%=user._id%>', event)" class="admin-btn">Delete</button>
                 </div>
             </div>
         <%})%>

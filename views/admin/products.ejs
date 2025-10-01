@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include('../partials/head') %>
+<body>
+    <%- include('../partials/adminHeader') %>
+
+    <h1>Products Page</h1>
+    
+    <%if(errors.message) {%>
+        <div class="error-message">
+            <p class="error"><%=errors.message%></p>
+        </div>
+    <%}%>
+    <div class="products-cnt">
+        <%if(products.length == 0) {%>
+            <h2>Product Not Found!</h2>
+        <%} else {%>
+            <% products.forEach((item)=> { %>
+                <div class="product-wrap">
+                    <h2><%=item.title%></h2>
+                    <h3><%=item.price%></h3>
+                    <p><%=item.description%></p>
+                    <a href="/product/<%=item.id%>">See More</a>
+                    <% 
+                        const creator = users.find(user => user._id.toString() === item.user.toString());
+                    %>
+                    <%if(isLogged){%>
+                        <div class="cart-operation">
+                            <form action="/cart/<%=item._id.toString() %>" method="POST">
+                                <input type="submit" value="Add Cart">
+                            </form>
+                        </div>
+                    <%}%>
+
+                    <div>
+                        <p>Created By <span class="autor"><%= creator ? creator.username : 'Unknown' %></span></p>
+                    </div>
+
+                </div>
+            <%})%>
+
+        <%}%>
+    </div>
+
+    
+</body>
+</html>

@@ -8,7 +8,7 @@
         <div class="edit-user" id="edit-user">
             <h1>Edit User: <%=editUser.username%></h1>
             <%if(errors){%>
-                <p class="error"><%=errors.message%></p>
+                <p id="error" class="error"><%=errors.message%></p>
             <%}%>
               <form onsubmit="editUser('<%=editUser._id%>', event)" id="edit-user-form">
                 <input type="text" value="<%=editUser.username %>" name="username" placeholder="Enter Username" required>

@@ -1,4 +1,5 @@
 import User from "../models/user.js";
+import Product from '../models/product.js'
 import { isLogged } from "../middleware/isAuthHelper.js";
 import { errors } from "../utils/errorMessage.js";
 
@@ -18,6 +19,25 @@ export const getAllUsers = async (req, res)=>{
         return res.status(500).send('Interval server errorr!')
     }
 }
+
+
+export const getProducts = async(req, res)=> {
+    try {
+        const user = await User.findById(req.cookies.user.id);
+        const users = await User.find();
+        const products = await Product.find();
+        return res.status(200).render('admin/products', {
+            products, 
+            errors, 
+            isLogged, 
+            user,
+            users,
+            title: 'All Products Page'
+        });
+    } catch (error) {
+        return res.status(404).render('admin/products', {error: 'error'})
+    }
+};
 
 export const getEditUser = async(req, res)=>{
     const users = await User.find();
