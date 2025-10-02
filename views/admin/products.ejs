@@ -17,24 +17,28 @@
         <%} else {%>
             <% products.forEach((item)=> { %>
                 <div class="product-wrap">
-                    <img class="rounded" src="<%=product.image%>" alt="User Image" width="120" height="120" />
+                    <img class="rounded" src="<%=item.image%>" alt="product Image" width="120" height="120" />
                     <h2><%=item.title%></h2>
                     <h3><%=item.price%></h3>
                     <p><%=item.description%></p>
                     <a href="/product/<%=item.id%>">See More</a>
+                    <div>
+                        <button id="edit" class="admin-btn"><a href="/admin/product/<%=item._id%>/edit">Edit</a></button>
+                        <button type="button" onclick="deleteProduct('<%=item._id%>', event)" class="admin-btn">Delete</button>
+                    </div>
                     <% 
                         const creator = users.find(user => user._id.toString() === item.user.toString());
                     %>
                     <div>
                         <p>Created By <span class="autor"><%= creator ? creator.username : 'Unknown' %></span></p>
                     </div>
-
-                </div>s
+                    
+                </div>
             <%})%>
 
         <%}%>
     </div>
 
-    
+    <script src="/js/main.js"></script>
 </body>
 </html>

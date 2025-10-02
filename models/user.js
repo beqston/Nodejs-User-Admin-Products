@@ -25,9 +25,6 @@ const userSchema = new mongoose.Schema({
     password:{
         type: String,
         required: [true, 'you have must be password'],
-        minlength: [8, "Password must be at least 8 characters"],
-        maxlength: [40, "Password cannot exceed 40 characters"],
-        trim: true,
         select: false,
         validate:{
             validator: function(value){
@@ -96,6 +93,22 @@ userSchema.pre('save', async function(next){
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
+
+// hashed password after update user
+userSchema.pre('findOneAndUpdate', async function (next) {
+  const update = this.getUpdate();
+  
+  if (update.password) {
+    update.password = await bcrypt.hash(update.password, 12);
+    this.setUpdate(update);
+  }
+    // Optional: delete confirmPassword if it's passed in the update
+    if (update.confirmPassword) {
+      delete update.confirmPassword;
+    }
+  next();
+});
+
 // Validate ObjectId references before saving
 userSchema.pre('save', async function(next){
   if (this.products && this.products.length > 0) {

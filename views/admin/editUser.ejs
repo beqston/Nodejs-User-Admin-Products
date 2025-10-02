@@ -10,6 +10,10 @@
             <%if(errors){%>
                 <p id="error" class="error"><%=errors.message%></p>
             <%}%>
+             <div class="edit-image">
+                <img class="rounded" src="<%=editUser.image%>" alt="product Image" width="32" height="32" />
+                 <button class="delete-image" onclick="deleteUserImage('<%=editUser._id%>', event)">Delete Image</button>
+             </div>
               <form onsubmit="editUser('<%=editUser._id%>', event)" id="edit-user-form">
                 <input type="text" value="<%=editUser.username %>" name="username" placeholder="Enter Username" required>
                 <input type="email" value="<%=editUser.email%>" name="email" placeholder="Enter Email" required>

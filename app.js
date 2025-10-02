@@ -32,7 +32,8 @@ mongoose.connect(process.env.MONGODB_URI, {
 });
 
 app.use(express.static('public'));
-app.use('/uploads',  express.static('uploads'));
+app.use('/uploads', express.static('uploads'));
+
 
 // parser request body and json
 app.use(express.json());

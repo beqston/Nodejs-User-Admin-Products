@@ -80,3 +80,24 @@ async function deleteUser(id, event) {
         // Optional: Show error to user (e.g. alert or toast)
     }
 }
+
+async function deleteUserImage(id, event){
+    event.preventDefault();
+
+    try {
+        const res = await fetch(`/admin/user/delete/image/`+id, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if(!res.ok){
+            const error = res.json().catch(()=>({}));
+            throw new Error(error.message || 'Failed to delete user photo.')
+        }
+        window.location.href = '/admin/user/'+id+'/edit'; 
+    } catch (err) {
+        console.error('Delete failed:', err.message);
+        // Optional: Show error to user (e.g. alert or toast)
+    }
+}

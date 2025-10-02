@@ -84,7 +84,7 @@ export const updateUser = async (req, res) => {
 
       // Handle file upload if present
       if (req.file) {
-          updateData.image = '/uploads/' + req.file.filename; // Store the file path
+          updateData.image = '/uploads/users/' + req.file.filename; // Store the file path
       }
 
       const user = await User.findByIdAndUpdate(id, updateData, {

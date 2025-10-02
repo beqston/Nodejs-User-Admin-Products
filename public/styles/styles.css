@@ -114,6 +114,8 @@ form button{
     flex-direction: column;
     gap: 10px;
     margin-bottom: 20px;
+    align-items: center;
+    padding: 10px;
 }
 
 .dropdown {
@@ -304,7 +306,16 @@ button, input[type="submit"]{
     top: 10px;
     cursor: pointer;
 }
-
+.edit-image{
+    margin-left: 10px;
+}
+.delete-image{
+    padding: 8px;
+    border-radius: 8px;
+    background-color: rgb(41, 191, 211);
+    color: white;
+    font-weight: 700;
+}
 /* Keyframes to animate fade in and fade out */
 @keyframes showError {
     0% {

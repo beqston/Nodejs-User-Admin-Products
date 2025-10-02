@@ -35,7 +35,7 @@ export const postProduct = async (req, res) => {
   try {
     if (isLogged) {
       const userId = req.cookies.user.id;
-      const { title, price, description, image } = req.body;
+      const { title, price, description  } = req.body;
 
       const user = await User.findById(userId);
       if (!user) {
