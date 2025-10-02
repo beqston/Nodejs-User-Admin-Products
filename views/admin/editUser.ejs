@@ -15,6 +15,10 @@
                 <input type="email" value="<%=editUser.email%>" name="email" placeholder="Enter Email" required>
                 <input type="password" name="password" placeholder="Enter New Password (leave blank to keep current)">
                 <input type="password" name="confirmPassword" placeholder="Confirm New Password">
+                <select name="role">
+                    <option value="user" <%= editUser.role === 'user' ? 'selected' : '' %>>User</option>
+                    <option value="admin" <%= editUser.role === 'admin' ? 'selected' : '' %>>Admin</option>
+                </select>
                 <input type="file" name="image" accept="image/*" />
                 <button type="submit">Update User</button>
             </form>
