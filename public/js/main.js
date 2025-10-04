@@ -168,3 +168,33 @@ async function deleteProduct(id, event) {
     }
 }
 
+async function updatecartQuantity(productID, action) {
+  try {
+    const res = await fetch(`/cart/${productID}/quantity`, {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ action }) // Correct format
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || 'Failed to update quantity');
+    }
+
+    const data = await res.json();
+
+    // Find the product's DOM container and update quantity
+    const cartItem = document.querySelector(`[data-product-id="${productID}"]`);
+    if (!cartItem) return;
+
+    const qtyElement = cartItem.querySelector('.qty');
+    if (qtyElement) {
+      qtyElement.textContent = data.quantity;
+    }
+
+  } catch (err) {
+    console.error('Error updating quantity:', err.message);
+  }
+}

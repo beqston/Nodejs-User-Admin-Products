@@ -1,5 +1,5 @@
 import express from "express";
-import { getForgot, getHome, getLogin, getProduct, getProducts, getProfile, getReset, getSignUp, logOutAll, postSignUp, postLogin, postProduct, postForgot, postReset, getMyPoructs, getApiAllUsers, getApiAllProducts, getCart, addToCart, deleteFromCart } from "../conntrolers/mainController.js";
+import { getForgot, getHome, getLogin, getProduct, getProducts, getProfile, getReset, getSignUp, logOutAll, postSignUp, postLogin, postProduct, postForgot, postReset, getMyPoructs, getApiAllUsers, getApiAllProducts, getCart, addToCart, deleteFromCart, updateCartQuantity } from "../conntrolers/mainController.js";
 const mainRouter = express.Router();
 import { errors } from "../utils/errorMessage.js";
 import { isAuthHelper, isLogged, pathNow } from "../middleware/isAuthHelper.js";
@@ -69,6 +69,7 @@ mainRouter.get('/my-products/:id', getMyPoructs);
 mainRouter.route('/forgot').get(getForgot).post(postForgot);
 mainRouter.route('/reset/:token').get(getReset).post(userResetValidation, postReset);
 mainRouter.get('/cart', getCart);
+mainRouter.post('/cart/:productId/quantity', updateCartQuantity)
 mainRouter.route('/cart/:id').post(addToCart).delete(deleteFromCart);
 // get all users
 mainRouter.get('/api/v1/users', getApiAllUsers);

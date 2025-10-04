@@ -33,4 +33,5 @@ adminRouter.route('/admin/product/:id/edit')
   .patch(updateProductImage.single('image'), updateProduct);
 adminRouter.delete('/admin/product/:id/delete', deleteProduct);
 
+
 export default adminRouter;

@@ -10,20 +10,22 @@
     <%} else {%>
         <div class="cart-wrap">
             <%cart.forEach((item)=>{%>
-                <div class="center">
-                    <p class="quantity">quantity: <%=item.quantity%></p>
+                <div class="center" data-product-id="<%= item.product._id.toString() %>">
+                    <p class="quantity">quantity: <span class="qty"><%=item.quantity%></span></p>
+                    <div>
+                        <button id="quantity-btn" onclick="updatecartQuantity('<%=item.product._id.toString()%>', 'increase')">add quantity</button>
+                        <button id="quantity-btn" onclick="updatecartQuantity('<%=item.product._id.toString()%>', 'decrease')">decrease quantity</button>
+                    </div>
                     <h2><%=item.product.title%></h2>
                     <h3><%=item.product.price%></h3>
                     <p><%=item.product.description%></p>
 
-                    <%if(isLogged){%>
-                        <div class="cart-operation">
-                            <form action="/cart/<%=item.product._id.toString() %>" method="POST">
-                                <input type="submit" value="Add Cart">
-                            </form>
-                            <button id="hidenBTN" onclick="deleteProductFromCart('<%= item.product._id.toString() %>')" >Remove From Cart</button>
-                        </div>
-                    <%}%>
+                    <div class="cart-operation">
+                        <form action="/cart/<%=item.product._id.toString() %>" method="POST">
+                            <input type="submit" value="Add Cart">
+                        </form>
+                        <button id="hidenBTN" onclick="deleteProductFromCart('<%= item.product._id.toString() %>')" >Remove From Cart</button>
+                    </div>
                 </div>
             <%})%>
         </div>

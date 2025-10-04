@@ -278,7 +278,7 @@ button, input[type="submit"]{
 .quantity{
     font-weight: 800;
     font-size: 20px;
-    color: goldenrod;
+    color: darkcyan;
 }
 .cart-wrap{
     width: 100%;
@@ -333,6 +333,14 @@ button, input[type="submit"]{
     background-color: rgb(41, 191, 211);
     color: white;
     font-weight: 700;
+}
+
+#quantity-btn{
+    padding: 8px;
+    width: fit-content;
+    color: whitesmoke;
+    font-weight: 700;
+    background-color: rgb(38, 194, 221);
 }
 /* Keyframes to animate fade in and fade out */
 @keyframes showError {

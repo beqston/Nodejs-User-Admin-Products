@@ -296,6 +296,7 @@ export const logOutAll = async(req, res)=>{
     res.clearCookie('sessionId'); // default name unless you've customized it
     res.clearCookie('user');
     res.clearCookie('token');
+    cart.length = 0;
     return res.status(301).redirect('/');
     });
 };
@@ -609,4 +610,30 @@ export const deleteFromCart = async (req, res) => {
     cart.length = 0;
     cart.push(...filteredCart);
     return res.status(200)
+};
+
+
+export const updateCartQuantity = async (req, res) => {
+  const { productId } = req.params;
+  const { action } = req.body;
+
+  try {
+    const item = cart.find(i => i.product._id.toString() === productId);
+    if (!item) {
+      return res.status(404).json({ message: 'Item not found in cart' });
+    }
+
+    if (action === 'increase') {
+      item.quantity += 1;
+    } else if (action === 'decrease') {
+      item.quantity = Math.max(1, item.quantity - 1);
+    } else {
+      return res.status(400).json({ message: 'Invalid action' });
+    }
+
+    res.status(200).json({ quantity: item.quantity });
+
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
 };
