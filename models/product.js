@@ -17,7 +17,8 @@ const productSchema = new mongoose.Schema({
     },
     image:{
         type:String,
-        reqired: [true, 'Image is required']
+        default:'/photos/default_product.png',
+        set: v => v && v.trim() !== '' ? v : '/photos/default_product.png'
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,

@@ -6,15 +6,15 @@
 
     <h1>All Users</h1>
     <section class="wrapper-section">
-        <%users.forEach((user, index)=>{%>
+        <%users.forEach((user)=>{%>
             <div class="wrapper">
                 <img class="rounded" src="<%=user.image%>" alt="User Image" width="24" height="24" />
                 <h2><%=user.username%></h2>
                 <h3><%=user.email%></h3>
                 <h4><%=user.role%></h4>
                 <div>
-                    <button id="edit" class="admin-btn"><a href="/admin/user/<%=user._id%>/edit">Edit</a></button>
-                    <button type="button" onclick="deleteUser('<%=user._id%>', event)" class="admin-btn">Delete</button>
+                    <button class="admin-btn"><a href="/admin/user/<%=user._id%>/edit">Edit</a></button>
+                    <button class="delete-user-btn" type="button" onclick="deleteUser('<%=user._id%>', event)" class="admin-btn">Delete</button>
                 </div>
             </div>
         <%})%>

@@ -4,18 +4,25 @@
 <body>
     <%- include('../partials/adminHeader') %>
 
+
+    <div id="succses-message-cnt">
+        <p id="succses-message">Product updated successfully</p>
+    </div>
+
     <section class="add-product">
-        <h2>Add Product</h2>
-        <form action="/add-product" method="POST" enctype="multipart/form-data">
-            <input type="text" name="title" placeholder="Title" >
-            <input type="number" name="price" step="0.01" placeholder="Price">
+        <h2>Update Product</h2>
+        <%if(errors.message){%>
+            <p class="error"><%=errors.message%></p>
+        <%}%>
+        <form onsubmit="updateProduct('<%=product._id%>', event)" action="/add-product"  id="update-product-form">
+            <input type="text" name="title" value="<%=product.title%>" placeholder="Title" >
+            <input type="number" name="price" value="<%=product.price%>" step="0.01" placeholder="Price">
             <input type="file" name="image" accept="image/*" />
-            <textarea name="description"></textarea>
-            <button type="submit">Add Product</button>
+            <textarea name="description"><%=product.description%></textarea>
+            <button onclick="showSuccsessMessage()" id="update-product" type="submit">Update Product</button>
         </form>
     </section>
 
     <script src="/js/main.js"></script>
-
 </body>
 </html>

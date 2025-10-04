@@ -7,6 +7,8 @@ async function isAdminHelper(req){
         const user = await User.findById(req.cookies.user._id);
         if(user.role === 'admin'){
             isAdmin = true;
+        }else{
+            isAdmin = false;
         }
     }
 }

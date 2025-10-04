@@ -42,8 +42,13 @@ export const postProduct = async (req, res) => {
         return res.status(404).send('User not found');
       }
 
+      if(!title || !price || !description){
+        errors.message = 'title, price and description is required!'
+        return res.status(204).redirect('/')
+      }
+
         // Handle image upload (optional)
-        let imagePath = '';
+        let imagePath = '/photos/default_product.png';
         if (req.file) {
             const ext = path.extname(req.file.originalname);
             const filename = `${req.file.filename}-new${ext}`;

@@ -1,3 +1,6 @@
+const wrapperProduct = document.getElementById('wrapper-section"');
+const succsessMessage = document.getElementById('succses-message');
+
 async function deleteProductFromCart(productId) {
     document.querySelectorAll('.center').forEach((item) => {
         item.addEventListener('click', () => {
@@ -61,6 +64,11 @@ async function editUser(id, event) {
 
 async function deleteUser(id, event) {
     event.preventDefault();
+    document.querySelectorAll('.wrapper').forEach((item)=>{
+        item.addEventListener('click', ()=>{
+            item.style.display = 'none';
+        })
+    })
     try {
         const res = await fetch(`/admin/user/${id}/delete`, {
             method: 'DELETE',
@@ -72,9 +80,6 @@ async function deleteUser(id, event) {
             const error = await res.json().catch(() => ({}));
             throw new Error(error.message || 'Failed to delete user.');
         }
-        // Handle success (e.g. show a success message, refresh UI)
-        console.log('User deleted successfully');
-        window.location.href = '/admin/users'; 
     } catch (err) {
         console.error('Delete failed:', err.message);
         // Optional: Show error to user (e.g. alert or toast)
@@ -101,3 +106,65 @@ async function deleteUserImage(id, event){
         // Optional: Show error to user (e.g. alert or toast)
     }
 }
+
+async function updateProduct(id, event){
+    event.preventDefault();
+        
+    try {
+        const form = document.getElementById('update-product-form');
+
+        if (!form) {
+            console.error('Edit form not found');
+            return;
+        };
+
+        const formData = new FormData(form);
+
+        const res = await fetch(`/admin/product/${id}/edit`, {
+            method: 'PATCH',
+            body: formData
+        });
+
+        if(!res.ok){
+            const error = await res.json().catch(()=>({}));
+            throw new Error(error.message || `Failed to update user: ${res.statusText}`)
+        }
+
+    } catch (err) {
+        console.log('error:'+err.message)
+    }
+}
+
+function showSuccsessMessage(){
+    succsessMessage.style.display ='flex'
+    setTimeout(()=>{
+        succsessMessage.style.display ='none'
+    }, 4000)
+}
+
+
+
+async function deleteProduct(id, event) {
+    event.preventDefault();
+    document.querySelectorAll('.product-wrap').forEach((item) => {
+        item.addEventListener('click', () => {
+            item.style.display = 'none';
+        });
+    });
+    try {
+        const res = await fetch(`/admin/product/${id}/delete`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!res.ok) {
+            const error = await res.json().catch(() => ({}));
+            throw new Error(error.message || 'Failed to delete product.');
+        }
+
+    } catch (err) {
+        console.error('Delete failed:', err.message);
+    }
+}
+

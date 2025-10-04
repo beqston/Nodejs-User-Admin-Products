@@ -270,7 +270,7 @@ form button{
 button, input[type="submit"]{
     cursor: pointer;
 }
-.admin-btn{
+.admin-btn, .delete-user-btn, .delete-product-btn{
     padding: 8px;
     background-color: rgb(13, 186, 220);
     border-radius: 8px;
@@ -299,6 +299,24 @@ button, input[type="submit"]{
     padding-top: 30px;
 }
 
+#succses-message-cnt{
+    display: flex;
+    justify-content: center;
+}
+#succses-message{
+    display: none;
+    position: absolute;
+    top: 2rem;
+    width: 200px;
+    height: 80px;
+    padding: 20px;
+    justify-content: center;
+    text-align: center;
+    background-color: rgb(6, 1, 1);
+    color: rgb(43, 238, 13);
+    border-radius: 8px;
+    font-weight: 700;
+}
 
 .close-edit{
     position: absolute;
@@ -352,5 +370,18 @@ button, input[type="submit"]{
     100% {
         opacity: 0;
         transform: translateY(-20px);
+    }
+}
+
+@keyframes showSuccsessMessage {
+    0%{
+        opacity: 0;
+        visibility: hidden;
+    }50%{
+        opacity: 1;
+        visibility: visible;
+    }100%{
+        opacity: 0;
+        visibility: hidden;
     }
 }

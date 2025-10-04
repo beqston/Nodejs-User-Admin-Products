@@ -23,8 +23,8 @@
                     <p><%=item.description%></p>
                     <a href="/product/<%=item.id%>">See More</a>
                     <div>
-                        <button id="edit" class="admin-btn"><a href="/admin/product/<%=item._id%>/edit">Edit</a></button>
-                        <button type="button" onclick="deleteProduct('<%=item._id%>', event)" class="admin-btn">Delete</button>
+                        <button class="admin-btn"><a href="/admin/product/<%=item._id%>/edit">Edit</a></button>
+                        <button class="delete-product-btn" type="button" onclick="deleteProduct('<%=item._id%>', event)" class="admin-btn">Delete</button>
                     </div>
                     <% 
                         const creator = users.find(user => user._id.toString() === item.user.toString());
