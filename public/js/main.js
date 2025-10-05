@@ -8,6 +8,7 @@ async function deleteProductFromCart(productId) {
         });
     });
         alert("Product removed from cart!");
+        window.location.href = '/cart'
     try {
         const response = await fetch(`http://localhost:4000/cart/${productId}`, {
             method: "DELETE",
@@ -18,7 +19,7 @@ async function deleteProductFromCart(productId) {
         if (!response.ok) {
             throw new Error(`Failed to delete product: ${response.statusText}`);
         }
-
+        
     } catch (error) {
         console.error("Error deleting product:", error.message);
     }
@@ -82,7 +83,6 @@ async function deleteUser(id, event) {
         }
     } catch (err) {
         console.error('Delete failed:', err.message);
-        // Optional: Show error to user (e.g. alert or toast)
     }
 }
 
@@ -142,8 +142,6 @@ function showSuccsessMessage(){
     }, 4000)
 }
 
-
-
 async function deleteProduct(id, event) {
     event.preventDefault();
     document.querySelectorAll('.product-wrap').forEach((item) => {
@@ -194,7 +192,38 @@ async function updatecartQuantity(productID, action) {
       qtyElement.textContent = data.quantity;
     }
 
+    window.location.href = '/cart'
+
   } catch (err) {
     console.error('Error updating quantity:', err.message);
   }
+}
+
+function showDeleteAccountDialog(){
+    document.getElementById('delete-account-dialog').style.display='block'
+}
+
+function closeDeleteAccountDialog(){
+    document.getElementById('delete-account-dialog').style.display='none'
+}
+
+async function deleteMyAccount(id, event) {
+    event.preventDefault();
+    try {
+        const res = await fetch(`/user/${id}/delete`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            throw new Error(data.message || 'Failed to delete user.');
+        }
+    } catch (err) {
+        window.location.href = '/';
+        console.error('Delete failed:', err.message);
+    }
 }

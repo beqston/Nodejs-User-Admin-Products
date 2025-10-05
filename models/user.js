@@ -120,5 +120,26 @@ userSchema.pre('save', async function(next){
   next(); // <-- Always call next if no error
 });
 
+// pre hook to delete products
+userSchema.pre('findOneAndDelete', async function(next) {
+  try {
+    const filter = this.getFilter();
+    console.log("User delete filter:", filter);
+
+    const user = await this.model.findOne(filter);
+    console.log("User found:", user);
+
+    if (user) {
+      const result = await mongoose.model('Product').deleteMany({ user: user._id });
+      console.log(`Deleted ${result.deletedCount} products.`);
+    }
+
+    next();
+  } catch (err) {
+    console.error("Error in findOneAndDelete hook:", err);
+    next(err);
+  }
+});
+
 const User = mongoose.model('User', userSchema);
 export default User;

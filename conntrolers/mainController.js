@@ -363,7 +363,7 @@ export const getProduct = async(req, res)=>{
       return res.status(400).send('File Not Found!  <a href="/products">Back Products Page</a>');
     };
 
-    const {username} = users.find(user=> user._id.toString() === product.user._id.toString());
+    const postCreator = users.find(user=> user._id.toString() === product.user._id.toString());
 
     if(isLogged){
         const userCookie = req.cookies.user;
@@ -374,7 +374,7 @@ export const getProduct = async(req, res)=>{
         user,
         users,
         errors,
-        username,
+        username:postCreator && postCreator.username,
         title: `Product Item | ${product.title}`
     });
     };
@@ -384,7 +384,7 @@ export const getProduct = async(req, res)=>{
         product,
         errors,
         users,
-        username,
+        username:postCreator && postCreator.username,
         title: `Product Item | ${product.title}`
     });
     
@@ -560,12 +560,19 @@ export const getCart = async (req, res)=>{
      if(isLogged){
         const id = req.cookies.user.id;
         const user = await User.findById(id);
+        let total = 0;
+        cart.forEach((item)=>{
+            const mult = item.quantity * item.product.price
+            total = total + mult
+
+        } )
         return res.status(200).render('cart', {
         isLogged,
         user,
         title: 'Cart List',
         cart,
-        users
+        users,
+        total
     });
    }
     return res.status(200).render('cart', {
@@ -635,5 +642,39 @@ export const updateCartQuantity = async (req, res) => {
 
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+
+export const deleteUserAccount = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletedUser = await User.findByIdAndDelete(id);
+
+    if (!deletedUser) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'User not found!'
+      });
+    }
+
+    const imagePath = path.join(__dirname, '../', deletedUser.image); // Fixed typo
+    if (fs.existsSync(imagePath)) {
+      fs.unlinkSync(imagePath);
+    }
+
+    await Product.deleteMany({ user: id });
+
+    return res.status(200).json({
+      status: 'success',
+      message: 'User deleted successfully'
+    });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    return res.status(500).json({
+      status: 'error',
+      message: 'Internal server error'
+    });
   }
 };

@@ -342,6 +342,42 @@ button, input[type="submit"]{
     font-weight: 700;
     background-color: rgb(38, 194, 221);
 }
+
+
+.total{
+    color: cadetblue;
+}
+.total-price{
+    color: black;
+}
+.delete-account-cnt{
+    border: 2px solid goldenrod;
+    margin-top: 10px;
+}
+.delete-account-cnt button{
+    background-color: grey;
+    color: rgb(78, 17, 17);
+    font-weight: 700;
+    padding: 8px;
+    font-size: 18px;
+}
+#delete-account-dialog{
+    display: none;
+    position: absolute;
+    top: 20px;
+    justify-content: center;
+    border: 2px solid red;
+    align-items: center;
+    padding: 20px;
+    background-color: grey;
+    text-align: center;
+    transform: translateX(-4rem);
+}
+#delete-account-dialog p{
+    font-size: 20px;
+    color: black;
+    padding-bottom: 10px;
+}
 /* Keyframes to animate fade in and fade out */
 @keyframes showError {
     0% {

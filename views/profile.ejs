@@ -14,6 +14,18 @@
             <h4>Products: <span><%=userPosts.length%></span></h4>
             <a href="/my-products/<%=user._id%>">My Products</a>
         </div>
+
+        <div class="delete-account-cnt">
+            <button onclick="showDeleteAccountDialog()">Delete Account</button>
+
+            <div id="delete-account-dialog">
+                <p>Do you want delete your account?</p>
+                <button onclick="closeDeleteAccountDialog()">No</button>
+                <button onclick="deleteMyAccount('<%=user._id%>', event)">Yes</button>
+            </div>
+
+        </div>
     </div>
+    <script src="/js/main.js"></script>
 </body>
 </html>

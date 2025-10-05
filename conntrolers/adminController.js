@@ -134,6 +134,8 @@ export const deleteUser =  async (req, res) => {
       fs.unlinkSync(imagePath);
     }
 
+    await Product.deleteMany({ user: id });
+
     // If this is an API call from fetch, do NOT redirect.
     return res.status(202).json({
       status: 'success',
