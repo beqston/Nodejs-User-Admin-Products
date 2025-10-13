@@ -743,7 +743,7 @@ export const uploadImageUserProfile = async (req, res) => {
     
     if (req.file) {
       const ext = path.extname(req.file.originalname);
-      const filename = `${req.file.filename}${ext}`;
+      const filename = `${req.file.filename}-new${ext}`;
       const outputPath = path.join(__dirname, '../uploads/users', filename); // adjust as needed
 
       // Find user
@@ -843,3 +843,4 @@ export const updateUserProfile = async (req, res)=>{
   }
 
 }
+

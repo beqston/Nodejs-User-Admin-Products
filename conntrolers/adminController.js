@@ -5,6 +5,7 @@ import { errors } from "../utils/errorMessage.js";
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import sharp from "sharp";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -85,9 +86,33 @@ export const updateUser = async (req, res) => {
           delete updateData.confirmPassword;
       }
 
-      // Handle file upload if present
+    // Handle file upload if present
       if (req.file) {
-          updateData.image = '/uploads/users/' + req.file.filename; // Store the file path
+        const ext = path.extname(req.file.originalname);
+        const filename = `${req.file.filename}-new${ext}`;
+        const outputPath = path.join(__dirname, '../uploads/users', filename); // adjust as needed
+
+        // Find user
+        const user = await User.findById(id);
+
+        // Remove old image if it's not the default
+        if (user.image && user.image !== '/photos/profile.png') {
+          const oldImagePath = path.join(__dirname, '..', user.image); // convert web path to fs path
+
+          if (fs.existsSync(oldImagePath)) {
+            fs.unlinkSync(oldImagePath);
+          }
+        }
+
+        // Resize and save image
+        await sharp(req.file.path)
+          .resize(24, 24)
+          .toFile(outputPath);
+
+        // Remove original image
+        fs.unlinkSync(req.file.path);
+
+        updateData.image = `/uploads/users/${filename}`; // store relative path
       }
 
       const user = await User.findByIdAndUpdate(id, updateData, {
