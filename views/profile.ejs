@@ -14,8 +14,10 @@
             <h4>Products: <span><%=userPosts.length%></span></h4>
             <a href="/my-products/<%=user._id%>">My Products</a>
         </div>
+        
 
-        <div class="delete-account-cnt">
+        <div class="user-account-cnt">
+            <button> <a href="/user/<%=user._id%>/edit">Edit Account</a></button>
             <button onclick="showDeleteAccountDialog()">Delete Account</button>
 
             <div id="delete-account-dialog">

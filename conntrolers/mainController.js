@@ -9,6 +9,10 @@ import fs from 'fs';
 import sharp from "sharp";
 import path from "path";
 import nodemailer from "nodemailer";
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const cart =[];
 
@@ -678,3 +682,164 @@ export const deleteUserAccount = async (req, res) => {
     });
   }
 };
+
+export const getUserProfile = async(req, res)=>{
+  const {id} =req.params;
+  try {
+    const user = await User.findById(id);
+    if(!isLogged){
+      return res.status(401).redirect('/')
+    }
+    return res.status(200).render('editProfile', {
+      user,
+      errors,
+      title: `Edit ${user.username}'s Profile`,
+      isLogged
+    })
+  } catch (error) {
+    return res.status(500).send('Intervall server error!')
+  }
+}
+
+export const deleteUserProfileImage =  async (req, res) => {
+  const {id} = req.params;
+  try {
+    const user = await User.findById(id);
+    if(!user){
+      return res.stattus(404).json({
+        status:'fail',
+        message: 'User not found!'
+      })
+    }
+    // Don't try to delete default image
+    if (user.image && user.image !== '/photos/profile.png') {
+      const imagePath = path.join(__dirname, '../', user.image);
+      // Check if file exists before trying to delete
+      if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath);
+      }
+      user.image ='/photos/profile.png';
+      await user.save();
+    }
+
+    return res.status(200).json({
+      status:'succses',
+      message:'Image Deleted!'
+    })
+
+  } catch (error) {
+    return res.status(500).json({
+      status:'fail',
+      message: 'Intenal server error!'
+    })
+  }
+}
+
+export const uploadImageUserProfile = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const updateData = { ...req.body };
+    
+    if (req.file) {
+      const ext = path.extname(req.file.originalname);
+      const filename = `${req.file.filename}${ext}`;
+      const outputPath = path.join(__dirname, '../uploads/users', filename); // adjust as needed
+
+      // Find user
+      const user = await User.findById(id);
+
+      // Remove old image if it's not the default
+      if (user.image && user.image !== '/photos/profile.png') {
+        const oldImagePath = path.join(__dirname, '..', user.image); // convert web path to fs path
+
+        if (fs.existsSync(oldImagePath)) {
+          fs.unlinkSync(oldImagePath);
+        }
+      }
+
+      // Resize and save image
+      await sharp(req.file.path)
+        .resize(24, 24)
+        .toFile(outputPath);
+
+      // Remove original image
+      fs.unlinkSync(req.file.path);
+
+      updateData.image = `/uploads/users/${filename}`; // store relative path
+    }
+
+    await User.findByIdAndUpdate(id, updateData, {
+      new: true,
+      runValidators: true,
+    });
+
+    return res.status(200).json({
+      status: 'success',
+      message: 'Image Updated',
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: 'fail',
+      message: error.message,
+    });
+  }
+};
+
+
+export const updateUserProfile = async (req, res)=>{
+  const {id} = req.params;
+  const loggedInUserId = req.cookies.user._id
+  
+  try {
+    if (!loggedInUserId) {
+      return res.status(401).json({
+        status:'fail',
+        message:'Unauthorized: No user logged in'
+      })
+    }
+
+    if(loggedInUserId !== id){
+      return res.status(403).json({
+        status:'fail',
+        message: 'Forbidden: You can only edit your own profile'
+      })
+    }
+   const user = await User.findById(id)
+
+    const {username, email, password, confirmPassword } = req.body;
+    if(username){
+      user.username = username;
+    }
+
+    if(email){
+      user.email = email;
+    }
+
+    if(password){
+      if(password !== confirmPassword){
+        errors.message = 'Passwords do not match'
+        return res.status(404).json({
+          status:'fail',
+          message:'Passwords do not match'
+        })
+      }
+      user.password = password;
+    }
+
+    await user.save();
+
+    return res.status(200).json({
+      status:"succses",
+      data: user
+    })
+
+  } catch (error) {
+    console.error('Error updating user:', error);
+    res.status(400).json({
+      status: "fail",
+      message: error.message || "Error updating user"
+    });
+  }
+
+}

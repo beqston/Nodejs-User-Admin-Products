@@ -227,3 +227,88 @@ async function deleteMyAccount(id, event) {
         console.error('Delete failed:', err.message);
     }
 }
+
+async function deleteUserProfileImage(id, event) {
+    event.preventDefault();
+    try {
+        const res = await fetch(`/user/${id}/image/delete`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!res.ok) {
+            const error = await res.json().catch(() => ({}));
+            throw new Error(error.message || 'Failed to delete user photo.');
+        }
+
+        // Optionally redirect or update UI
+        window.location.href = `/user/${id}/edit`;
+        console.log('User image deleted successfully.');
+    } catch (err) {
+        console.error('Delete failed:', err.message);
+    }
+}
+
+async function updateUserProfile(id, event){
+    event.preventDefault();
+        
+    try {
+        const form = document.getElementById('update-user-form');
+
+        if (!form) {
+            console.error('Edit form not found');
+            return;
+        };
+
+        const formData = new FormData(form);
+
+        const res = await fetch(`/user/${id}/edit`, {
+            method: 'PATCH',
+            body: formData
+        });
+
+        if(!res.ok){
+            const error = await res.json().catch(()=>({}));
+            throw new Error(error.message || `Failed to update user: ${res.statusText}`)
+        }
+
+        window.location.href = '/profile/'+id
+
+    } catch (err) {
+        console.log('error:'+err.message)
+    }
+}
+
+async function updateUserProfileImage(id, event) {
+    event.preventDefault();
+
+    try {
+        const form = document.getElementById('upload-profile-image');
+
+        if (!form) {
+            console.error('Upload form not found');
+            return;
+        }
+
+        const formData = new FormData(form);
+
+        const res = await fetch(`/user/${id}/upload/image`, {
+            method: "PATCH",
+            body: formData
+        });
+
+        if (!res.ok) {
+            const error = await res.json().catch(() => ({}));
+            throw new Error(error.message || `Failed to update user: ${res.statusText}`);
+        }
+
+        // Redirect after success
+        window.location.href = `/profile/${id}`;
+        
+    } catch (error) {
+        console.error("Image upload error:", error.message);
+        alert("Failed to update profile image: " + error.message);
+    }
+}

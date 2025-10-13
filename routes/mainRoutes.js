@@ -1,5 +1,5 @@
 import express from "express";
-import { getForgot, getHome, getLogin, getProduct, getProducts, getProfile, getReset, getSignUp, logOutAll, postSignUp, postLogin, postProduct, postForgot, postReset, getMyPoructs, getApiAllUsers, getApiAllProducts, getCart, addToCart, deleteFromCart, updateCartQuantity, deleteUserAccount } from "../conntrolers/mainController.js";
+import { getForgot, getHome, getLogin, getProduct, getProducts, getProfile, getReset, getSignUp, logOutAll, postSignUp, postLogin, postProduct, postForgot, postReset, getMyPoructs, getApiAllUsers, getApiAllProducts, getCart, addToCart, deleteFromCart, updateCartQuantity, deleteUserAccount, updateUserProfile, getUserProfile, deleteUserProfileImage, uploadImageUserProfile } from "../conntrolers/mainController.js";
 const mainRouter = express.Router();
 import { errors } from "../utils/errorMessage.js";
 import { isAuthHelper, isLogged, pathNow } from "../middleware/isAuthHelper.js";
@@ -53,6 +53,7 @@ multer({dest:'uploads/products'});
 
 const productImage = upload('products');
 const userImage = upload('users');
+const updateUserImage = upload('users');
 
 // Crud operator router
 mainRouter.get('/', getHome);
@@ -71,7 +72,10 @@ mainRouter.route('/reset/:token').get(getReset).post(userResetValidation, postRe
 mainRouter.get('/cart', getCart);
 mainRouter.post('/cart/:productId/quantity', updateCartQuantity)
 mainRouter.route('/cart/:id').post(addToCart).delete(deleteFromCart);
+mainRouter.route('/user/:id/edit').get(getUserProfile).patch(userResetValidation, updateUserProfile);
 mainRouter.delete('/user/:id/delete', deleteUserAccount)
+mainRouter.delete('/user/:id/image/delete', deleteUserProfileImage)
+mainRouter.patch('/user/:id/upload/image', updateUserImage.single('image'), uploadImageUserProfile)
 
 // get all users
 mainRouter.get('/api/v1/users', getApiAllUsers);

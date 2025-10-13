@@ -203,6 +203,7 @@ export const getEditProduct = async (req, res)=>{
      }
 }
 
+
 export const updateProduct = async (req, res)=>{
   const {id} = req.params;
   try {

@@ -350,11 +350,11 @@ button, input[type="submit"]{
 .total-price{
     color: black;
 }
-.delete-account-cnt{
+.user-account-cnt{
     border: 2px solid goldenrod;
     margin-top: 10px;
 }
-.delete-account-cnt button{
+.user-account-cnt button{
     background-color: grey;
     color: rgb(78, 17, 17);
     font-weight: 700;
@@ -378,6 +378,23 @@ button, input[type="submit"]{
     color: black;
     padding-bottom: 10px;
 }
+.update-user-profile-cnt{
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+}
+.update-user-image{
+    display: flex;
+    flex-direction: column;
+    padding-left: 30px;
+    align-items: center;
+}
+.update-user{
+    display: flex;
+    align-items: flex-start;
+    padding-left: 3rem;
+}
+
+
 /* Keyframes to animate fade in and fade out */
 @keyframes showError {
     0% {

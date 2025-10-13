@@ -58,7 +58,7 @@ const userSchema = new mongoose.Schema({
     token: String,
     products: [
         {
-            type: mongoose.Schema.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
             ref: 'Product',
             validate: {
                 validator:mongoose.Types.ObjectId.isValid,
